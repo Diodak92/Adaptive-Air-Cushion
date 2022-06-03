@@ -12,7 +12,7 @@
 
 * h : height of the dumped load in millimetres
 * m : weight of the dumped load in kilograms with optional "+" tag meaning extra weight  
-* vc : valve open with optional open ration
+* vc : valve open with optional open ratio
 * vc : valve closed with optional close ratio
 * last digit : test number
 
@@ -20,4 +20,4 @@
    1. height 3500 mm
    2. weigth 5 kg
    3. valves open
-   4. test number 2
+   4. test 2
