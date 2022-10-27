@@ -3,6 +3,7 @@
 #include <Adafruit_ADS1X15.h>
 #include <TLE9201.h>
 #include <LoRa.h>
+#include <cmath>
 
 // H-bridge object instance
 TLE9201 h8(7);
@@ -31,22 +32,23 @@ void setup() {
 
 void loop() {
   // variables for storing ADC values
-  int16_t adc2_ch3;
-  // h8.update_status(); /* No need to call that if set_pwm_dir() is used */  
-  // MAIN_print_hbridge_status();
-  
+  //int16_t adc2_ch3;
   // read data from ADC2
-  adc2_ch3 = ads_2.readADC_SingleEnded(3); // min 0, max 17607
-  Serial.print("ADC2_CH3: ");
-  Serial.println(adc2_ch3);
-  // start H-bridge -- check status when battery is unpluged
-  h8.set_pwm_dir(1, 0); 
-  //delay(1500);
-  //h8.set_pwm_dir(1, 1);
-  delay(1500);
-  h8.set_pwm_dir(0, 0);
-  delay(5000); 
+  //adc2_ch3 = ads_2.readADC_SingleEnded(3); // min 0, max 17607
+  //Serial.print("ADC2_CH3: ");
+  //Serial.println(adc2_ch3);
+  // displacement
+  float displacement;
+  displacement = compute_position(ads_2.readADC_SingleEnded(3));
+  Serial.print("Displacement: ");
+  Serial.print(displacement);
+  Serial.println(" [mm]");
 
+  // start H-bridge -- check status when battery is unpluged
+  //h8.set_pwm_dir(1, 0); 
+  //delay(1500);
+  //h8.set_pwm_dir(0, 0);
+  delay(1500); 
 }
 
 void MAIN_print_hbridge_status(void)
@@ -102,7 +104,20 @@ void MAIN_print_hbridge_status(void)
   Serial.println();
 }
 
-float compute_position(int16_t)
-{
-  return 1.0;
+float compute_position(int16_t adc_counts)
+{ 
+  // voltage variables [V]
+  float u, u_min = 0.0, u_max = 3.3;
+  // angular position variables [deg]
+  float ang_pos, ang_pos_min = 0.0, ang_pos_max = 270.0;
+  // distance variables in [mm]
+  float distance, gear_diameter = 22.0;
+  // convert counts into voltage
+  //u = ads_2.computeVolts(adc_counts); // replace ads_2 with class instance
+  u = ads_2.computeVolts(adc_counts); // replace ads_2 with class instance
+  // map voltage to angular position
+  ang_pos = map(u, u_min, u_max, ang_pos_min, ang_pos_max);
+  // compute absolute distance
+  distance = (ang_pos / ang_pos_max) * M_PI * gear_diameter; 
+  return distance;
 }
