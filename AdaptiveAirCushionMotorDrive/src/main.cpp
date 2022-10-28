@@ -118,6 +118,6 @@ float compute_position(int16_t adc_counts)
   // map voltage to angular position
   ang_pos = map(u, u_min, u_max, ang_pos_min, ang_pos_max);
   // compute absolute distance
-  distance = (ang_pos / ang_pos_max) * M_PI * gear_diameter; 
+  distance = (ang_pos / 360.0) * M_PI * gear_diameter; 
   return distance;
 }
