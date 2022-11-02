@@ -30,25 +30,52 @@ void setup() {
   Serial.println("Setup successfully completedd!");
 }
 
-void loop() {
-  // variables for storing ADC values
-  //int16_t adc2_ch3;
-  // read data from ADC2
-  //adc2_ch3 = ads_2.readADC_SingleEnded(3); // min 0, max 17607
-  //Serial.print("ADC2_CH3: ");
-  //Serial.println(adc2_ch3);
-  // displacement
-  float displacement;
-  displacement = compute_position(ads_2.readADC_SingleEnded(3));
-  Serial.print("Displacement: ");
-  Serial.print(displacement);
+void loop()
+{
+  // init control variables
+  float valve_pos, valve_pos_set, valve_pos_set_raw;
+  // set valve tolerance
+  const float valve_pos_tolerance = 2.5;
+  // get valve set position from reomote controler
+  // can be temporarily replaced by input from the terminal 
+  valve_pos_set_raw = 45.0; 
+  // set min and max range
+  valve_pos_set = constrain(valve_pos_set_raw, 0.0, 70);
+  Serial.print("Set position: ");
+  Serial.print(valve_pos_set);
+  Serial.print(" [mm], ");
+  // get valve displacement
+  valve_pos = compute_position(ads_2.readADC_SingleEnded(3));
+  Serial.print("position: ");
+  Serial.print(valve_pos);
   Serial.println(" [mm]");
 
-  // start H-bridge -- check status when battery is unpluged
-  //h8.set_pwm_dir(1, 0); 
-  //delay(1500);
-  //h8.set_pwm_dir(0, 0);
-  delay(1500); 
+  // check if valve position is within tolerance
+  if (abs(valve_pos_set - valve_pos) >= valve_pos_tolerance)
+  {
+    // control motor direction
+    if (valve_pos_set >= valve_pos)
+    {
+      // turn motor on in forward direction
+      h8.set_pwm_dir(1, 0);
+      Serial.println("Motor: ON, direction: R");
+    }
+    else
+    {
+      // turn motor on in reverse direction
+      h8.set_pwm_dir(1, 1);
+      Serial.println("Motor: ON, direction: R");
+    }
+    h8.set_pwm_dir(1, 0);
+  }
+  else
+  {
+    // turn off the motor
+    h8.set_pwm_dir(0, 0);
+    Serial.println("Valve in position : )");
+  }
+  // wait for next loop iter
+  delay(50);
 }
 
 void MAIN_print_hbridge_status(void)
