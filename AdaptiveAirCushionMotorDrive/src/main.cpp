@@ -35,10 +35,10 @@ void loop()
   // init control variables
   float valve_pos, valve_pos_set, valve_pos_set_raw;
   // set valve tolerance
-  const float valve_pos_tolerance = 2.5;
+  const float valve_pos_tolerance = 1.5;
   // get valve set position from reomote controler
   // can be temporarily replaced by input from the terminal 
-  valve_pos_set_raw = 45.0; 
+  valve_pos_set_raw = 35.0; 
   // set min and max range
   valve_pos_set = constrain(valve_pos_set_raw, 0.0, 70);
   Serial.print("Set position: ");
@@ -58,7 +58,7 @@ void loop()
     {
       // turn motor on in forward direction
       h8.set_pwm_dir(1, 0);
-      Serial.println("Motor: ON, direction: R");
+      Serial.println("Motor: ON, direction: F");
     }
     else
     {
@@ -66,7 +66,6 @@ void loop()
       h8.set_pwm_dir(1, 1);
       Serial.println("Motor: ON, direction: R");
     }
-    h8.set_pwm_dir(1, 0);
   }
   else
   {
