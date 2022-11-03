@@ -49,6 +49,7 @@ void loop()
   Serial.print("position: ");
   Serial.print(valve_pos);
   Serial.println(" [mm]");
+  //Serial.print(ads_2.readADC_SingleEnded(3));
 
   // check if valve position is within tolerance
   if (abs(valve_pos_set - valve_pos) >= valve_pos_tolerance)
@@ -74,7 +75,7 @@ void loop()
     Serial.println("Valve in position : )");
   }
   // wait for next loop iter
-  delay(50);
+  delay(500);
 }
 
 void MAIN_print_hbridge_status(void)
@@ -139,10 +140,11 @@ float compute_position(int16_t adc_counts)
   // distance variables in [mm]
   float distance, gear_diameter = 22.0;
   // convert counts into voltage
-  //u = ads_2.computeVolts(adc_counts); // replace ads_2 with class instance
   u = ads_2.computeVolts(adc_counts); // replace ads_2 with class instance
-  // map voltage to angular position
-  ang_pos = map(u, u_min, u_max, ang_pos_min, ang_pos_max);
+   // map voltage to angular position
+  //ang_pos = map(u, u_min, u_max, ang_pos_min, ang_pos_max);
+  ang_pos = (u-u_min) *  (ang_pos_max-ang_pos_min) / (u_max-u_min) +ang_pos_min;
+  //Serial.print(ang_pos);
   // compute absolute distance
   distance = (ang_pos / 360.0) * M_PI * gear_diameter; 
   return distance;
