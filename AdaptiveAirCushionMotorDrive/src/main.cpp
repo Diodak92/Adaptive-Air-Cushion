@@ -35,12 +35,12 @@ void loop()
   // init control variables
   float valve_pos, valve_pos_set, valve_pos_set_raw;
   // set valve tolerance
-  const float valve_pos_tolerance = 1.5;
+  const float valve_pos_tolerance = 10.0; // 1.5;
   // get valve set position from reomote controler
   // can be temporarily replaced by input from the terminal 
-  valve_pos_set_raw = 35.0; 
+  valve_pos_set_raw = 1140; 
   // set min and max range
-  valve_pos_set = constrain(valve_pos_set_raw, 0.0, 70);
+  valve_pos_set = constrain(valve_pos_set_raw, 1120.0, 1490.0);
   Serial.print("Set position: ");
   Serial.print(valve_pos_set);
   Serial.print(" [mm], ");
@@ -58,14 +58,14 @@ void loop()
     if (valve_pos_set >= valve_pos)
     {
       // turn motor on in forward direction
-      h8.set_pwm_dir(1, 0);
-      Serial.println("Motor: ON, direction: F");
+      h8.set_pwm_dir(1, 1);
+      Serial.println("Motor: ON, direction: UP");
     }
     else
     {
       // turn motor on in reverse direction
-      h8.set_pwm_dir(1, 1);
-      Serial.println("Motor: ON, direction: R");
+      h8.set_pwm_dir(1, 0);
+      Serial.println("Motor: ON, direction: DOWN");
     }
   }
   else
@@ -75,7 +75,7 @@ void loop()
     Serial.println("Valve in position : )");
   }
   // wait for next loop iter
-  delay(500);
+  delay(50);
 }
 
 void MAIN_print_hbridge_status(void)
@@ -135,17 +135,17 @@ float compute_position(int16_t adc_counts)
 { 
   // voltage variables [V]
   float u, u_min = 0.0, u_max = 3.3;
-  // angular position variables [deg]
-  float ang_pos, ang_pos_min = 0.0, ang_pos_max = 270.0;
+  // angular position variables [deg] - entire range of potentiometer 0 - 3600 deg
+  // valve extreme positions: 1140 deg (open), 1470 deg (closed)
+  float ang_pos, ang_pos_min = 0.0, ang_pos_max = 3600.0, ang_pos_valve_min = 1140.0, ang_pos_valve_max = 1470.0;
   // distance variables in [mm]
   float distance, gear_diameter = 22.0;
   // convert counts into voltage
   u = ads_2.computeVolts(adc_counts); // replace ads_2 with class instance
-   // map voltage to angular position
-  //ang_pos = map(u, u_min, u_max, ang_pos_min, ang_pos_max);
-  ang_pos = (u-u_min) *  (ang_pos_max-ang_pos_min) / (u_max-u_min) +ang_pos_min;
+  // calculate angular position;
+  ang_pos = (u-u_min) *  (ang_pos_max-ang_pos_min) / (u_max-u_min) + ang_pos_min;
   //Serial.print(ang_pos);
   // compute absolute distance
   distance = (ang_pos / 360.0) * M_PI * gear_diameter; 
-  return distance;
+  return ang_pos; //distance;
 }
