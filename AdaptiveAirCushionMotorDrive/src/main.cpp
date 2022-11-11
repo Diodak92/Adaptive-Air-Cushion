@@ -1,31 +1,83 @@
 #include <Arduino.h>
-#include <ArduinoJson.h> 
+#include <ArduinoJson.h>
 #include <Adafruit_ADS1X15.h>
 #include <TLE9201.h>
 #include <LoRa.h>
 #include <cmath>
 
+class AdaptiveValve
+{
+private:
+  // ADC and ADC channel variables
+  Adafruit_ADS1115 adc_ic;
+  uint8_t adc_channel;
+  // voltage variables [V]
+  float u;
+  const float u_min = 0.0;
+  const float u_max = 3.3;
+  // angular position variables [deg] - entire range of potentiometer 0 - 3600 deg
+  float ang_pos_valve_min;
+  float ang_pos_valve_max;
+  const float ang_pos_min = 0.0;
+  const float ang_pos_max = 3600.0;
+  const float gear_diameter = 22.0;
+
+public:
+  // measure grear angular position
+  float ang_pos;
+  // valve displacement
+  float distance;
+  AdaptiveValve(Adafruit_ADS1115 ads1115, uint8_t channel, float pos_min = 1140.0, float pos_max = 1470.0)
+  {
+    adc_ic = ads1115;
+    adc_channel = channel;
+    ang_pos_valve_min = pos_min;
+    ang_pos_valve_max = pos_max;
+  }
+
+  // Compute position function declaration
+  float compute_position()
+  {
+    // convert counts into voltage
+    u = adc_ic.computeVolts(adc_ic.readADC_SingleEnded(adc_channel)); // replace ads_2 with class instance
+    // calculate angular position;
+    ang_pos = (u - u_min) * (ang_pos_max - ang_pos_min) / (u_max - u_min) + ang_pos_min;
+    // compute absolute distance
+    distance = (ang_pos / 360.0) * M_PI * gear_diameter;
+  }
+
+  // print position
+  void print_position()
+  {
+    Serial.print("position: ");
+    Serial.print(ang_pos);
+    Serial.println(" [deg]");
+  }
+};
+
 // H-bridge object instance
 TLE9201 h8(7);
 // Analog to digital conventer instance
 Adafruit_ADS1115 ads_2;
+// Declare adaptive valve object
+AdaptiveValve ad_valve_1(ads_2, 3);
 
 /* MAIN functions declaration */
 void MAIN_print_hbridge_status(void);
-/* Compute position function declaration */
-float compute_position(int16_t);
 
-void setup() {
+void setup()
+{
   // start serial comunication
   Serial.begin(115200);
-  while(!Serial);
+  while (!Serial);
   Serial.println("Setup started!");
   // initialization of H-bridge
   h8.begin();
   // initialize external ADC
-  if (!ads_2.begin(0b1001001)) {
+  if (!ads_2.begin(0b1001001))
+  {
     Serial.println("Failed to initialize ADS.");
-  while (1);
+    while (1);
   }
   Serial.println("Setup successfully completedd!");
 }
@@ -37,19 +89,16 @@ void loop()
   // set valve tolerance
   const float valve_pos_tolerance = 10.0; // 1.5;
   // get valve set position from reomote controler
-  // can be temporarily replaced by input from the terminal 
-  valve_pos_set_raw = 1140; 
+  // can be temporarily replaced by input from the terminal
+  valve_pos_set_raw = 1140;
   // set min and max range
   valve_pos_set = constrain(valve_pos_set_raw, 1120.0, 1490.0);
   Serial.print("Set position: ");
   Serial.print(valve_pos_set);
   Serial.print(" [mm], ");
   // get valve displacement
-  valve_pos = compute_position(ads_2.readADC_SingleEnded(3));
-  Serial.print("position: ");
-  Serial.print(valve_pos);
-  Serial.println(" [mm]");
-  //Serial.print(ads_2.readADC_SingleEnded(3));
+  valve_pos = ad_valve_1.compute_position();
+  ad_valve_1.print_position();
 
   // check if valve position is within tolerance
   if (abs(valve_pos_set - valve_pos) >= valve_pos_tolerance)
@@ -129,23 +178,4 @@ void MAIN_print_hbridge_status(void)
   Serial.println(h8.read_reg(TLE9201_REV_REG));
 
   Serial.println();
-}
-
-float compute_position(int16_t adc_counts)
-{ 
-  // voltage variables [V]
-  float u, u_min = 0.0, u_max = 3.3;
-  // angular position variables [deg] - entire range of potentiometer 0 - 3600 deg
-  // valve extreme positions: 1140 deg (open), 1470 deg (closed)
-  float ang_pos, ang_pos_min = 0.0, ang_pos_max = 3600.0, ang_pos_valve_min = 1140.0, ang_pos_valve_max = 1470.0;
-  // distance variables in [mm]
-  float distance, gear_diameter = 22.0;
-  // convert counts into voltage
-  u = ads_2.computeVolts(adc_counts); // replace ads_2 with class instance
-  // calculate angular position;
-  ang_pos = (u-u_min) *  (ang_pos_max-ang_pos_min) / (u_max-u_min) + ang_pos_min;
-  //Serial.print(ang_pos);
-  // compute absolute distance
-  distance = (ang_pos / 360.0) * M_PI * gear_diameter; 
-  return ang_pos; //distance;
 }
