@@ -11,10 +11,11 @@ private:
   // motor driver channel
   int motor_channel;
   // H-bridge motor driver object
-  TLE9201 motor_driver(int motor_channel);
+  // TLE9201 motor_driver;
   // ADC and ADC channel variables
   Adafruit_ADS1115 adc_ic;
-  uint8_t adc_channel;
+  int ads_i2c_address;
+  uint8_t ads_analog_channel;
   // valve position set point
   float valve_pos_set;
   // angular positions limits
@@ -39,17 +40,28 @@ public:
   // valve displacement [mm]
   float distance;
 
-  AdaptiveValve( // TLE9201 motor,
-      Adafruit_ADS1115 ads1115, uint8_t channel,
-      float pos_min = 1120.0, float pos_max = 1490.0,
-      float set_position = 1140)
+  AdaptiveValve(int motor_channel,
+      int ads_i2c_address, uint8_t ads_analog_channel,
+      float ang_pos_valve_min = 1120.0, float ang_pos_valve_max = 1490.0,
+      float valve_pos_set = 1140)
   {
-    // motor_driver = motor;
-    adc_ic = ads1115;
-    adc_channel = channel;
-    ang_pos_valve_min = pos_min;
-    ang_pos_valve_max = pos_max;
-    valve_pos_set = constrain(set_position, ang_pos_valve_min, ang_pos_valve_max);
+    //motor_driver(motor_channel);
+    ads_i2c_address = ads_i2c_address;
+    ads_analog_channel = ads_analog_channel;
+    ang_pos_valve_min = ang_pos_valve_min;
+    ang_pos_valve_max = ang_pos_valve_max;
+    valve_pos_set = constrain(valve_pos_set, ang_pos_valve_min, ang_pos_valve_max);
+  }
+
+  // start tle H-bridge motor driver
+  //void tle_begin(){
+  // motor_driver.begin();
+  //}
+
+  // start ads ADC
+  bool ads_begin()
+  {
+    return adc_ic.begin(ads_i2c_address);
   }
 
   // set valve position
@@ -62,7 +74,7 @@ public:
   void compute_position()
   {
     // convert counts into voltage
-    u = adc_ic.computeVolts(adc_ic.readADC_SingleEnded(adc_channel)); // replace ads_2 with class instance
+    u = adc_ic.computeVolts(adc_ic.readADC_SingleEnded(ads_analog_channel)); // replace ads_2 with class instance
     // calculate angular position;
     ang_pos = (u - u_min) * (ang_pos_max - ang_pos_min) / (u_max - u_min) + ang_pos_min;
     // compute absolute distance
@@ -118,30 +130,26 @@ public:
 };
 
 // H-bridge object instance
-TLE9201 h8(7);
-// Analog to digital conventer instance
-Adafruit_ADS1115 ads_2;
+// TLE9201 h8(7);
 // Declare adaptive valve object
-AdaptiveValve ad_valve_1(ads_2, 3);
+AdaptiveValve ad_valve_1(7, 0b1001001, 3);
 
 /* MAIN functions declaration */
-void MAIN_print_hbridge_status(void);
+// void MAIN_print_hbridge_status(void);
 
 void setup()
 {
   // start serial comunication
   Serial.begin(115200);
-  while (!Serial)
-    ;
+  while (!Serial);
   Serial.println("Setup started!");
   // initialization of H-bridge
-  h8.begin();
+  // ad_valve_1.tle_begin();
   // initialize external ADC
-  if (!ads_2.begin(0b1001001))
+  if (!ad_valve_1.ads_begin())
   {
     Serial.println("Failed to initialize ADS.");
-    while (1)
-      ;
+    while (1);
   }
   Serial.println("Setup successfully completedd!");
 }
@@ -155,57 +163,4 @@ void loop()
 
   // wait for next loop iter
   delay(50);
-}
-
-void MAIN_print_hbridge_status(void)
-{
-  /* Print DIA register */
-  Serial.print("EN = ");
-  Serial.println(h8.dia_reg_bits.en);
-
-  Serial.print("OT = ");
-  Serial.println(h8.dia_reg_bits.ot);
-
-  Serial.print("TV = ");
-  Serial.println(h8.dia_reg_bits.tv);
-
-  Serial.print("CL = ");
-  Serial.println(h8.dia_reg_bits.cl);
-
-  Serial.print("DIA4 = ");
-  Serial.println(h8.dia_reg_bits.dia4);
-
-  Serial.print("DIA3 = ");
-  Serial.println(h8.dia_reg_bits.dia3);
-
-  Serial.print("DIA2 = ");
-  Serial.println(h8.dia_reg_bits.dia2);
-
-  Serial.print("DIA1 = ");
-  Serial.println(h8.dia_reg_bits.dia1);
-
-  /* Print CTRL register */
-  Serial.print("CMD = ");
-  Serial.println(h8.ctrl_reg_bits.cmd);
-
-  Serial.print("OLDIS = ");
-  Serial.println(h8.ctrl_reg_bits.oldis);
-
-  Serial.print("SIN = ");
-  Serial.println(h8.ctrl_reg_bits.sin);
-
-  Serial.print("SEN = ");
-  Serial.println(h8.ctrl_reg_bits.sen);
-
-  Serial.print("SDIR = ");
-  Serial.println(h8.ctrl_reg_bits.sdir);
-
-  Serial.print("SPWM = ");
-  Serial.println(h8.ctrl_reg_bits.spwm);
-
-  /* Print REV register */
-  Serial.print("Revision = ");
-  Serial.println(h8.read_reg(TLE9201_REV_REG));
-
-  Serial.println();
 }
