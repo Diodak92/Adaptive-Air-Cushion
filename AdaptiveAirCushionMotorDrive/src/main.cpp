@@ -8,35 +8,58 @@
 class AdaptiveValve
 {
 private:
+  // motor driver channel
+  int motor_channel;
+  // H-bridge motor driver object
+  TLE9201 motor_driver(int motor_channel);
   // ADC and ADC channel variables
   Adafruit_ADS1115 adc_ic;
   uint8_t adc_channel;
-  // voltage variables [V]
-  float u;
+  // valve position set point
+  float valve_pos_set;
+  // angular positions limits
+  float ang_pos_valve_min;
+  float ang_pos_valve_max;
+  // voltage for adc calculations
   const float u_min = 0.0;
   const float u_max = 3.3;
   // angular position variables [deg] - entire range of potentiometer 0 - 3600 deg
-  float ang_pos_valve_min;
-  float ang_pos_valve_max;
   const float ang_pos_min = 0.0;
   const float ang_pos_max = 3600.0;
+  // measurement gear nominal diameter
   const float gear_diameter = 22.0;
+  // valve tolerance
+  const float valve_pos_tolerance = 10.0;
 
 public:
-  // measure grear angular position
+  // potentiometer output voltage [V]
+  float u;
+  // gear angular position [deg]
   float ang_pos;
-  // valve displacement
+  // valve displacement [mm]
   float distance;
-  AdaptiveValve(Adafruit_ADS1115 ads1115, uint8_t channel, float pos_min = 1140.0, float pos_max = 1470.0)
+
+  AdaptiveValve( // TLE9201 motor,
+      Adafruit_ADS1115 ads1115, uint8_t channel,
+      float pos_min = 1120.0, float pos_max = 1490.0,
+      float set_position = 1140)
   {
+    // motor_driver = motor;
     adc_ic = ads1115;
     adc_channel = channel;
     ang_pos_valve_min = pos_min;
     ang_pos_valve_max = pos_max;
+    valve_pos_set = constrain(set_position, ang_pos_valve_min, ang_pos_valve_max);
+  }
+
+  // set valve position
+  void set_valve_position(float set_position)
+  {
+    valve_pos_set = constrain(set_position, ang_pos_valve_min, ang_pos_valve_max);
   }
 
   // Compute position function declaration
-  float compute_position()
+  void compute_position()
   {
     // convert counts into voltage
     u = adc_ic.computeVolts(adc_ic.readADC_SingleEnded(adc_channel)); // replace ads_2 with class instance
@@ -47,12 +70,51 @@ public:
   }
 
   // print position
-  void print_position()
+  void print_actual_position()
   {
+    compute_position();
     Serial.print("position: ");
     Serial.print(ang_pos);
     Serial.println(" [deg]");
   }
+
+  void print_set_position()
+  {
+    Serial.print("Set position: ");
+    Serial.print(valve_pos_set);
+    Serial.print(" [deg], ");
+  }
+  /*
+    void controller()
+    {
+      // update position on each call
+      compute_position();
+      // check if valve position is within tolerance
+      if (abs(valve_pos_set - ang_pos) >= valve_pos_tolerance)
+      {
+        // control motor direction
+        if (valve_pos_set >= ang_pos)
+        {
+          // turn motor on in forward direction
+          motor_driver.set_pwm_dir(1, 1);
+          Serial.println("Motor: ON, direction: UP");
+        }
+        else
+        {
+          // turn motor on in reverse direction
+          motor_driver.set_pwm_dir(1, 0);
+          Serial.println("Motor: ON, direction: DOWN");
+        }
+      }
+      else
+      {
+        // turn off the motor
+        motor_driver.set_pwm_dir(0, 0);
+        Serial.println("Valve in position : )");
+      }
+
+    }
+    */
 };
 
 // H-bridge object instance
@@ -69,7 +131,8 @@ void setup()
 {
   // start serial comunication
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial)
+    ;
   Serial.println("Setup started!");
   // initialization of H-bridge
   h8.begin();
@@ -77,52 +140,19 @@ void setup()
   if (!ads_2.begin(0b1001001))
   {
     Serial.println("Failed to initialize ADS.");
-    while (1);
+    while (1)
+      ;
   }
   Serial.println("Setup successfully completedd!");
 }
 
 void loop()
 {
-  // init control variables
-  float valve_pos, valve_pos_set, valve_pos_set_raw;
-  // set valve tolerance
-  const float valve_pos_tolerance = 10.0; // 1.5;
-  // get valve set position from reomote controler
-  // can be temporarily replaced by input from the terminal
-  valve_pos_set_raw = 1140;
-  // set min and max range
-  valve_pos_set = constrain(valve_pos_set_raw, 1120.0, 1490.0);
-  Serial.print("Set position: ");
-  Serial.print(valve_pos_set);
-  Serial.print(" [mm], ");
-  // get valve displacement
-  valve_pos = ad_valve_1.compute_position();
-  ad_valve_1.print_position();
+  ad_valve_1.set_valve_position(1140);
+  ad_valve_1.print_set_position();
+  ad_valve_1.print_actual_position();
+  // ad_valve_1.controller();
 
-  // check if valve position is within tolerance
-  if (abs(valve_pos_set - valve_pos) >= valve_pos_tolerance)
-  {
-    // control motor direction
-    if (valve_pos_set >= valve_pos)
-    {
-      // turn motor on in forward direction
-      h8.set_pwm_dir(1, 1);
-      Serial.println("Motor: ON, direction: UP");
-    }
-    else
-    {
-      // turn motor on in reverse direction
-      h8.set_pwm_dir(1, 0);
-      Serial.println("Motor: ON, direction: DOWN");
-    }
-  }
-  else
-  {
-    // turn off the motor
-    h8.set_pwm_dir(0, 0);
-    Serial.println("Valve in position : )");
-  }
   // wait for next loop iter
   delay(50);
 }
