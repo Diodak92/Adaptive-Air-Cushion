@@ -35,7 +35,7 @@ public:
       return 0;
     }
     // code state 1 if switch0 is shorted and switch1 is open
-    else if (((switch_state_0 == true) & (~switch_state_2 == false)) == true)
+    else if (((switch_state_0 == true) & (!switch_state_2 == false)) == true)
     {
       return 1;
     }
