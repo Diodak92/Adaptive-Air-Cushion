@@ -81,6 +81,13 @@ public:
     distance = (ang_pos / 360.0) * M_PI * gear_diameter;
   }
 
+  void print_set_position()
+  {
+    Serial.print("Set position: ");
+    Serial.print(valve_pos_set);
+    Serial.print(" [deg], ");
+  }
+
   // print position
   void print_actual_position()
   {
@@ -90,12 +97,6 @@ public:
     Serial.println(" [deg]");
   }
 
-  void print_set_position()
-  {
-    Serial.print("Set position: ");
-    Serial.print(valve_pos_set);
-    Serial.print(" [deg], ");
-  }
   /*
     void controller()
     {
@@ -162,5 +163,5 @@ void loop()
   // ad_valve_1.controller();
 
   // wait for next loop iter
-  delay(50);
+  delay(2000);
 }
