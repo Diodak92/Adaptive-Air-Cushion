@@ -30,19 +30,19 @@ public:
     switch_state_1 = digitalRead(switch_pin1);
     switch_state_2 = digitalRead(switch_pin2);
     // code state 0 if both switches are shorted
-    if ((switch_state_0 & switch_state_2) == true)
+    if ((switch_state_0 == true) & (switch_state_2 == false))
     {
       return 0;
     }
     // code state 1 if switch0 is shorted and switch1 is open
-    else if (((switch_state_0 == true) & (!switch_state_2 == false)) == true)
-    {
-      return 1;
-    }
-    // code state 2 if both switches are open
-    else if ((switch_state_0 | switch_state_2) == false)
+    else if ((switch_state_0 == false) & (switch_state_2 == true))
     {
       return 2;
+    }
+    // code state 1 if both switches are open
+    else if ((switch_state_0 & switch_state_2) == false)
+    {
+      return 1;
     }
     // return error for uknown states
     else
@@ -53,8 +53,8 @@ public:
 };
 
 // switches objects
-RemoteController heightSwitch(0, 1, 2);
-RemoteController massSwitch(3, 4, 5);
+RemoteController heightSwitch(3, 4, 5);
+RemoteController massSwitch(0, 1, 2);
 
 void setup()
 {
@@ -71,9 +71,10 @@ void loop()
 {
   // put your main code here, to run repeatedly:
  
-  Serial.println("Height switch state: ");
+  Serial.print("Height switch state: ");
   Serial.print(heightSwitch.read_swich_state());
-  Serial.println("Mass switch state: ");
+  Serial.print("\t Mass switch state: ");
   Serial.print(massSwitch.read_swich_state());
+  Serial.print("\n");
   delay(2000);
 }
