@@ -70,11 +70,59 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly:
- 
-  Serial.print("Height switch state: ");
-  Serial.print(heightSwitch.read_swich_state());
-  Serial.print("\t Mass switch state: ");
-  Serial.print(massSwitch.read_swich_state());
+  int switches_state, switch_state0, switch_state1;
+  int valve_level;
+
+  /*
+   Serial.print("Height switch state: ");
+   Serial.print(heightSwitch.read_swich_state());
+   Serial.print("\t Mass switch state: ");
+   Serial.print(massSwitch.read_swich_state());
+   Serial.print("\n");
+ */
+
+  switch_state0 = heightSwitch.read_swich_state();
+  switch_state1 = massSwitch.read_swich_state();
+  switches_state = (switch_state0 << 2) + switch_state1;
+
+  switch (switches_state)
+  {
+  case 0b0000:
+    valve_level = 0;
+    break;
+  case 0b0001:
+    valve_level = 1;
+    break;
+  case 0b0010:
+    valve_level = 2;
+    break;
+  case 0b0011:
+    valve_level = 3;
+    break;
+  case 0b0100:
+    valve_level = 4;
+    break;
+  case 0b0101:
+    valve_level = 5;
+    break;
+  case 0b0111:
+    valve_level = 6;
+    break;
+  case 0b1000:
+    valve_level = 7;
+    break;
+  case 0b1111:
+    valve_level = 8;
+    break;
+
+  default:
+    valve_level = -1;
+    break;
+  }
+
+  Serial.print("Coded state: ");
+  Serial.print(valve_level);
   Serial.print("\n");
+
   delay(2000);
 }
