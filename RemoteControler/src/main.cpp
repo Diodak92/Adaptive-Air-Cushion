@@ -2,7 +2,7 @@
 #include <ArduinoJson.h>
 #include <LoRa.h>
 
-#define ADC_BATTERY A0 // baterry pin
+#define ADC_BATTERY A0      // baterry pin
 #define GREEN_LED_BATTERY 6 // baterry LED
 
 class RemoteController
@@ -55,23 +55,49 @@ public:
   }
 };
 
+class Battery
+{
+private:
+  int battery_pin;
+  int led_indicator_pin;
+
+public:
+  Battery(int bat_pin, int led_pin)
+  {
+    battery_pin = bat_pin;
+    led_indicator_pin = led_pin;
+  };
+
+  void setup_battery()
+  {
+    pinMode(battery_pin, INPUT);
+    pinMode(led_indicator_pin, OUTPUT);
+    digitalWrite(led_indicator_pin, HIGH); // delete later
+  }
+
+  float read_battery_voltage()
+  {
+    // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 4.3V):
+    return analogRead(battery_pin) * (4.2 / 1023.0);
+  }
+};
 
 // create json object for storing data
 const int capacity_out = JSON_OBJECT_SIZE(2);
 StaticJsonDocument<capacity_out> output_data;
-
+// Battery object
+Battery remoteBattery(ADC_BATTERY, GREEN_LED_BATTERY);
 // switches objects
 RemoteController heightSwitch(3, 4, 5);
 RemoteController massSwitch(0, 1, 2);
 
 void setup()
 {
-  pinMode(GREEN_LED_BATTERY, OUTPUT);
-  digitalWrite(GREEN_LED_BATTERY, HIGH);
   // start serial comunication
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
+  remoteBattery.setup_battery();
   heightSwitch.set_switch_mode();
   massSwitch.set_switch_mode();
   Serial.println("Setup successfully completedd!");
@@ -82,6 +108,7 @@ void loop()
   // put your main code here, to run repeatedly:
   int switches_state, switch_state0, switch_state1;
   int valve_level;
+  float battery_voltage;
 
   /*
    Serial.print("Height switch state: ");
@@ -95,7 +122,7 @@ void loop()
   switch_state1 = massSwitch.read_swich_state();
   switches_state = (switch_state0 << 2) + switch_state1;
 
-    switch (switches_state)
+  switch (switches_state)
   {
   case 0b0000:
     valve_level = 0; // Height: L, Mass: L
@@ -132,9 +159,10 @@ void loop()
 
   output_data["height_mass_code"] = valve_level;
   serializeJson(output_data, Serial);
-  // Serial.print("Coded state: ");
-  // Serial.print(valve_level);
-  // Serial.print("\n");
+  Serial.print('\n');
+  Serial.print("Battery voltage: ");
+  Serial.print(remoteBattery.read_battery_voltage());
+  Serial.print(" [V] \n");
 
   delay(2000);
 }
