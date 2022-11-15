@@ -32,6 +32,8 @@ private:
   const float valve_pos_tolerance = 10.0;
 
 public:
+  // adc initialization status
+  bool adc_init_status;
   // potentiometer output voltage [V]
   float u;
   // gear angular position [deg]
@@ -45,7 +47,7 @@ public:
                 float valve_pos_set = 1140)
   {
     motor_driver.begin(motor_channel);
-    adc_ic.begin(ads_i2c_address);
+    adc_init_status = adc_ic.begin(ads_i2c_address);
     ads_analog_channel = ads_analog_channel;
     ang_pos_valve_min = ang_pos_valve_min;
     ang_pos_valve_max = ang_pos_valve_max;
@@ -129,14 +131,12 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
-
-  // initialize external ADC
-  /*if (!ad_valve_1.ads_begin())
+  // check if ADC for vavle 1 was initalized successfully
+  if (!ad_valve_1.adc_init_status)
   {
     Serial.println("Failed to initialize ADS.");
     while (1);
   }
-  */
   Serial.println("Setup successfully completedd!");
 }
 
@@ -145,8 +145,7 @@ void loop()
   ad_valve_1.set_valve_position(1140);
   ad_valve_1.print_set_position();
   ad_valve_1.print_actual_position();
-  // ad_valve_1.controller();
-
+  ad_valve_1.controller();
   // wait for next loop iter
   delay(2000);
 }
