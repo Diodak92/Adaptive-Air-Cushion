@@ -92,34 +92,34 @@ void loop()
   switch_state1 = massSwitch.read_swich_state();
   switches_state = (switch_state0 << 2) + switch_state1;
 
-  switch (switches_state)
+    switch (switches_state)
   {
   case 0b0000:
-    valve_level = 0;
+    valve_level = 0; // Height: L, Mass: L
     break;
   case 0b0001:
-    valve_level = 1;
+    valve_level = 1; // Height: L, Mass: M
     break;
   case 0b0010:
-    valve_level = 2;
-    break;
-  case 0b0011:
-    valve_level = 3;
+    valve_level = 2; // Height: L, Mass: H
     break;
   case 0b0100:
-    valve_level = 4;
+    valve_level = 3; // Height: M, Mass: L
     break;
   case 0b0101:
-    valve_level = 5;
+    valve_level = 4; // Height: M, Mass: M
     break;
-  case 0b0111:
-    valve_level = 6;
+  case 0b0110:
+    valve_level = 5; // Height: M, Mass: H
     break;
   case 0b1000:
-    valve_level = 7;
+    valve_level = 6; // Height: H, Mass: L
     break;
-  case 0b1111:
-    valve_level = 8;
+  case 0b1001:
+    valve_level = 7; // Height: H, Mass: M
+    break;
+  case 0b1010:
+    valve_level = 8; // Height: H, Mass: H
     break;
 
   default:
