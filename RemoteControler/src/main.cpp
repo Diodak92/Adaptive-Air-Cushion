@@ -130,9 +130,11 @@ void loop()
     break;
   }
 
-  Serial.print("Coded state: ");
-  Serial.print(valve_level);
-  Serial.print("\n");
+  output_data["height_mass_code"] = valve_level;
+  serializeJson(output_data, Serial);
+  // Serial.print("Coded state: ");
+  // Serial.print(valve_level);
+  // Serial.print("\n");
 
   delay(2000);
 }
