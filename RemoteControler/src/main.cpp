@@ -77,7 +77,7 @@ public:
 
   float read_battery_voltage()
   {
-    // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 4.3V):
+    // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 4.2V):
     return analogRead(battery_pin) * (4.2 / 1023.0);
   }
 };
@@ -108,7 +108,6 @@ void loop()
   // put your main code here, to run repeatedly:
   int switches_state, switch_state0, switch_state1;
   int valve_level;
-  float battery_voltage;
 
   /*
    Serial.print("Height switch state: ");
