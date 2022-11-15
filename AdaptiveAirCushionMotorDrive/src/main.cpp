@@ -11,10 +11,9 @@ private:
   // motor driver channel
   int motor_channel;
   // H-bridge motor driver object
-  // TLE9201 motor_driver;
+  TLE9201 motor_driver;
   // ADC and ADC channel variables
   Adafruit_ADS1115 adc_ic;
-  int ads_i2c_address;
   uint8_t ads_analog_channel;
   // valve position set point
   float valve_pos_set;
@@ -41,27 +40,16 @@ public:
   float distance;
 
   AdaptiveValve(int motor_channel,
-      int ads_i2c_address, uint8_t ads_analog_channel,
-      float ang_pos_valve_min = 1120.0, float ang_pos_valve_max = 1490.0,
-      float valve_pos_set = 1140)
+                int ads_i2c_address, uint8_t ads_analog_channel,
+                float ang_pos_valve_min = 1120.0, float ang_pos_valve_max = 1490.0,
+                float valve_pos_set = 1140)
   {
-    //motor_driver(motor_channel);
-    ads_i2c_address = ads_i2c_address;
+    motor_driver.begin(motor_channel);
+    adc_ic.begin(ads_i2c_address);
     ads_analog_channel = ads_analog_channel;
     ang_pos_valve_min = ang_pos_valve_min;
     ang_pos_valve_max = ang_pos_valve_max;
     valve_pos_set = constrain(valve_pos_set, ang_pos_valve_min, ang_pos_valve_max);
-  }
-
-  // start tle H-bridge motor driver
-  //void tle_begin(){
-  // motor_driver.begin();
-  //}
-
-  // start ads ADC
-  bool ads_begin()
-  {
-    return adc_ic.begin(ads_i2c_address);
   }
 
   // set valve position
@@ -78,7 +66,7 @@ public:
     // calculate angular position;
     ang_pos = (u - u_min) * (ang_pos_max - ang_pos_min) / (u_max - u_min) + ang_pos_min;
     // compute absolute distance
-    distance = (ang_pos / 360.0) * M_PI * gear_diameter;
+    distance = (ang_pos / 360.0) * 3.14159 * gear_diameter;
   }
 
   void print_set_position()
@@ -97,37 +85,34 @@ public:
     Serial.println(" [deg]");
   }
 
-  /*
-    void controller()
+  void controller()
+  {
+    // update position on each call
+    compute_position();
+    // check if valve position is within tolerance
+    if (abs(valve_pos_set - ang_pos) >= valve_pos_tolerance)
     {
-      // update position on each call
-      compute_position();
-      // check if valve position is within tolerance
-      if (abs(valve_pos_set - ang_pos) >= valve_pos_tolerance)
+      // control motor direction
+      if (valve_pos_set >= ang_pos)
       {
-        // control motor direction
-        if (valve_pos_set >= ang_pos)
-        {
-          // turn motor on in forward direction
-          motor_driver.set_pwm_dir(1, 1);
-          Serial.println("Motor: ON, direction: UP");
-        }
-        else
-        {
-          // turn motor on in reverse direction
-          motor_driver.set_pwm_dir(1, 0);
-          Serial.println("Motor: ON, direction: DOWN");
-        }
+        // turn motor on in forward direction
+        motor_driver.set_pwm_dir(1, 1);
+        Serial.println("Motor: ON, direction: UP");
       }
       else
       {
-        // turn off the motor
-        motor_driver.set_pwm_dir(0, 0);
-        Serial.println("Valve in position : )");
+        // turn motor on in reverse direction
+        motor_driver.set_pwm_dir(1, 0);
+        Serial.println("Motor: ON, direction: DOWN");
       }
-
     }
-    */
+    else
+    {
+      // turn off the motor
+      motor_driver.set_pwm_dir(0, 0);
+      Serial.println("Valve in position : )");
+    }
+  }
 };
 
 // H-bridge object instance
@@ -144,14 +129,14 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
-  // initialization of H-bridge
-  // ad_valve_1.tle_begin();
+
   // initialize external ADC
-  if (!ad_valve_1.ads_begin())
+  /*if (!ad_valve_1.ads_begin())
   {
     Serial.println("Failed to initialize ADS.");
     while (1);
   }
+  */
   Serial.println("Setup successfully completedd!");
 }
 
