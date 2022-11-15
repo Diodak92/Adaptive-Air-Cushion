@@ -3,6 +3,7 @@
 #include <LoRa.h>
 
 #define ADC_BATTERY A0 // baterry pin
+#define GREEN_LED_BATTERY 6 // baterry LED
 
 class RemoteController
 {
@@ -65,6 +66,8 @@ RemoteController massSwitch(0, 1, 2);
 
 void setup()
 {
+  pinMode(GREEN_LED_BATTERY, OUTPUT);
+  digitalWrite(GREEN_LED_BATTERY, HIGH);
   // start serial comunication
   Serial.begin(115200);
   while (!Serial);
