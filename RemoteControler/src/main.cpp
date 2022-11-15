@@ -2,6 +2,8 @@
 #include <ArduinoJson.h>
 #include <LoRa.h>
 
+#define ADC_BATTERY A0 // baterry pin
+
 class RemoteController
 {
 private:
@@ -51,6 +53,11 @@ public:
     }
   }
 };
+
+
+// create json object for storing data
+const int capacity_out = JSON_OBJECT_SIZE(2);
+StaticJsonDocument<capacity_out> output_data;
 
 // switches objects
 RemoteController heightSwitch(3, 4, 5);
