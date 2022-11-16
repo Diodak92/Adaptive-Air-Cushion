@@ -22,13 +22,6 @@ public:
     pinMode(switch_pin2, INPUT_PULLUP);
   }
 
-  //void set_switch_mode()
-  //{
-  //  pinMode(switch_pin0, INPUT_PULLUP);
-  //  pinMode(switch_pin1, INPUT_PULLUP);
-  //  pinMode(switch_pin2, INPUT_PULLUP);
-  //}
-
   int read_swich_state()
   {
     // read state of switches (NC logic)
@@ -74,14 +67,6 @@ public:
     attachInterrupt(digitalPinToInterrupt(led_indicator_pin), blink, CHANGE);
   };
 
-  // init this one in void setup
-  //void setup_battery()
-  //{
-  //  analogReadResolution(12);
-  //  pinMode(battery_pin, INPUT);
-  //  attachInterrupt(digitalPinToInterrupt(led_indicator_pin), blink, CHANGE);
-  //}
-
   float read_battery_voltage()
   {
     // Convert the analog reading (which goes from 0 - 4095) to a voltage (0 - 4.2V):
@@ -114,9 +99,6 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
-  //remoteBattery.setup_battery();
-  //heightSwitch.set_switch_mode();
-  //massSwitch.set_switch_mode();
   Serial.println("Setup successfully completedd!");
 }
 
