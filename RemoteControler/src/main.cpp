@@ -17,14 +17,17 @@ public:
     switch_pin0 = sw_pin0;
     switch_pin1 = sw_pin1;
     switch_pin2 = sw_pin2;
-  }
-
-  void set_switch_mode()
-  {
     pinMode(switch_pin0, INPUT_PULLUP);
     pinMode(switch_pin1, INPUT_PULLUP);
     pinMode(switch_pin2, INPUT_PULLUP);
   }
+
+  //void set_switch_mode()
+  //{
+  //  pinMode(switch_pin0, INPUT_PULLUP);
+  //  pinMode(switch_pin1, INPUT_PULLUP);
+  //  pinMode(switch_pin2, INPUT_PULLUP);
+  //}
 
   int read_swich_state()
   {
@@ -66,15 +69,18 @@ public:
   {
     battery_pin = bat_pin;
     led_indicator_pin = led_pin;
-  };
-
-  // init this one in void setup
-  void setup_battery()
-  {
     analogReadResolution(12);
     pinMode(battery_pin, INPUT);
     attachInterrupt(digitalPinToInterrupt(led_indicator_pin), blink, CHANGE);
-  }
+  };
+
+  // init this one in void setup
+  //void setup_battery()
+  //{
+  //  analogReadResolution(12);
+  //  pinMode(battery_pin, INPUT);
+  //  attachInterrupt(digitalPinToInterrupt(led_indicator_pin), blink, CHANGE);
+  //}
 
   float read_battery_voltage()
   {
@@ -108,9 +114,9 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
-  remoteBattery.setup_battery();
-  heightSwitch.set_switch_mode();
-  massSwitch.set_switch_mode();
+  //remoteBattery.setup_battery();
+  //heightSwitch.set_switch_mode();
+  //massSwitch.set_switch_mode();
   Serial.println("Setup successfully completedd!");
 }
 
