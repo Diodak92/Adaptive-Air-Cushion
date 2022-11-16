@@ -68,18 +68,28 @@ public:
     led_indicator_pin = led_pin;
   };
 
+  // init this one in void setup
   void setup_battery()
   {
     analogReadResolution(12);
     pinMode(battery_pin, INPUT);
-    pinMode(led_indicator_pin, OUTPUT);
-    digitalWrite(led_indicator_pin, HIGH); // delete later
+    attachInterrupt(digitalPinToInterrupt(led_indicator_pin), blink, CHANGE);
   }
 
   float read_battery_voltage()
   {
     // Convert the analog reading (which goes from 0 - 4095) to a voltage (0 - 4.2V):
-    return analogRead(battery_pin) * (4.2 / 4095.0);
+    return (analogRead(battery_pin) * (3.3 / 4095.0)) * (4.2 / 3.3); //* (4.2 / 4095.0);
+  }
+  bool low_battery_warning(float battery_voltage)
+  {
+    if (battery_voltage >= 3.15)
+      return false;
+    else
+      return true;
+  }
+  static void blink()
+  {
   }
 };
 
