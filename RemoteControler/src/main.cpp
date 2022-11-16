@@ -79,7 +79,7 @@ public:
   float read_battery_voltage()
   {
     // Convert the analog reading (which goes from 0 - 4095) to a voltage (0 - 4.2V):
-    return (analogRead(battery_pin) * (3.3 / 4095.0)) * (4.2 / 3.3); //* (4.2 / 4095.0);
+    return (analogRead(battery_pin) * (3.223 / 4095.0)) * (4.2 / 3.223); 
   }
   bool low_battery_warning(float battery_voltage)
   {
