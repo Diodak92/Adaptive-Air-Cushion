@@ -45,20 +45,20 @@ public:
   AdaptiveValve(int motor_channel,
                 int ads_i2c_address, uint8_t ads_analog_channel,
                 float ang_pos_valve_min = 1120.0, float ang_pos_valve_max = 1490.0,
-                float valve_pos_set = 1140)
+                float valve_pos_set = 1140) // Domyslne wartosci nie przechodza
   {
     motor_channel = motor_channel;
     ads_i2c_address = ads_i2c_address;
     ads_analog_channel = ads_analog_channel;
     ang_pos_valve_min = ang_pos_valve_min;
     ang_pos_valve_max = ang_pos_valve_max;
-    valve_pos_set = constrain(valve_pos_set, ang_pos_valve_min, ang_pos_valve_max);
+    valve_pos_set = valve_pos_set; //constrain(valve_pos_set, ang_pos_valve_min, ang_pos_valve_max);
   }
 
   // set valve position
   void set_valve_position(float set_position)
   {
-    valve_pos_set = constrain(set_position, ang_pos_valve_min, ang_pos_valve_max);
+    valve_pos_set = set_position; // constrain(set_position, ang_pos_valve_min, ang_pos_valve_max);
   }
 
   // run this in void setup
@@ -70,12 +70,16 @@ public:
   // Compute position function declaration
   void compute_position()
   {
+    Serial.println(adc_ic.readADC_SingleEnded(ads_analog_channel)); // replace ads_2 with class instance
     // convert counts into voltage
-    u = adc_ic.computeVolts(adc_ic.readADC_SingleEnded(ads_analog_channel)); // replace ads_2 with class instance
+    //u = adc_ic.computeVolts(adc_ic.readADC_SingleEnded(ads_analog_channel)); // replace ads_2 with class instance
+    //Serial.println(u);
     // calculate angular position;
-    ang_pos = (u - u_min) * (pot_pos_max - pot_pos_min) / (u_max - u_min) + pot_pos_min;
+    //ang_pos = (u - u_min) * (pot_pos_max - pot_pos_min) / (u_max - u_min) + pot_pos_min;
+    //Serial.println(ang_pos);
     // compute absolute distance
-    distance = (ang_pos / 360.0) * 3.14159 * gear_diameter;
+    //distance = (ang_pos / 360.0) * 3.14159 * gear_diameter;
+    //Serial.println(distance);
   }
 
   void print_set_position()
@@ -127,7 +131,7 @@ public:
 // H-bridge object instance
 // TLE9201 h8(7);
 // Declare adaptive valve object
-AdaptiveValve ad_valve_1(7, 0b1001001, 3);
+AdaptiveValve ad_valve_1(7, 0b1001001, 3); // Nie przechodzi -> , 1120.0, 1490.0, 1000.0);
 
 /* MAIN functions declaration */
 // void MAIN_print_hbridge_status(void);
@@ -145,15 +149,16 @@ void setup()
     Serial.println("Failed to initialize ADS.");
     while (1);
   }
-  Serial.println("Setup successfully completedd!");
+  Serial.println("Setup successfully completed!");
 }
 
 void loop()
 {
-  ad_valve_1.set_valve_position(1140);
+  ad_valve_1.set_valve_position(1100);
   ad_valve_1.print_set_position();
-  ad_valve_1.print_actual_position();
-  ad_valve_1.controller();
+  ad_valve_1.compute_position();
+  //ad_valve_1.print_actual_position();
+  //ad_valve_1.controller();
   // wait for next loop iter
   delay(2000);
 }
