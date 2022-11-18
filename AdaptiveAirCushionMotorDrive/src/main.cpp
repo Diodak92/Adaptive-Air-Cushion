@@ -14,6 +14,7 @@ private:
   TLE9201 motor_driver;
   // ADC and ADC channel variables
   Adafruit_ADS1115 adc_ic;
+  int ads_i2c_address;
   uint8_t ads_analog_channel;
   // valve position set point
   float valve_pos_set;
@@ -24,8 +25,8 @@ private:
   const float u_min = 0.0;
   const float u_max = 3.3;
   // angular position variables [deg] - entire range of potentiometer 0 - 3600 deg
-  const float ang_pos_min = 0.0;
-  const float ang_pos_max = 3600.0;
+  const float pot_pos_min = 0.0;
+  const float pot_pos_max = 3600.0;
   // measurement gear nominal diameter
   const float gear_diameter = 22.0;
   // valve tolerance
@@ -46,8 +47,8 @@ public:
                 float ang_pos_valve_min = 1120.0, float ang_pos_valve_max = 1490.0,
                 float valve_pos_set = 1140)
   {
-    motor_driver.begin(motor_channel);
-    adc_init_status = adc_ic.begin(ads_i2c_address);
+    motor_channel = motor_channel;
+    ads_i2c_address = ads_i2c_address;
     ads_analog_channel = ads_analog_channel;
     ang_pos_valve_min = ang_pos_valve_min;
     ang_pos_valve_max = ang_pos_valve_max;
@@ -60,13 +61,19 @@ public:
     valve_pos_set = constrain(set_position, ang_pos_valve_min, ang_pos_valve_max);
   }
 
+  // run this in void setup
+  void begin()
+  {
+    motor_driver.begin(motor_channel);
+    adc_init_status = adc_ic.begin(ads_i2c_address);
+  }
   // Compute position function declaration
   void compute_position()
   {
     // convert counts into voltage
     u = adc_ic.computeVolts(adc_ic.readADC_SingleEnded(ads_analog_channel)); // replace ads_2 with class instance
     // calculate angular position;
-    ang_pos = (u - u_min) * (ang_pos_max - ang_pos_min) / (u_max - u_min) + ang_pos_min;
+    ang_pos = (u - u_min) * (pot_pos_max - pot_pos_min) / (u_max - u_min) + pot_pos_min;
     // compute absolute distance
     distance = (ang_pos / 360.0) * 3.14159 * gear_diameter;
   }
@@ -131,6 +138,7 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
+  ad_valve_1.begin();
   // check if ADC for vavle 1 was initalized successfully
   if (!ad_valve_1.adc_init_status)
   {
