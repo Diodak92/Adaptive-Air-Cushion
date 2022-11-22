@@ -2,95 +2,22 @@
 #include <arduino-timer.h>
 #include <ArduinoJson.h>
 #include <LoRa.h>
+#include <Switch.h>
+#include <Battery.h>
 
 #define ADC_BATTERY A0      // baterry pin
 #define GREEN_LED_BATTERY 6 // baterry LED
 
-class Switch
-{
-private:
-  int switch_pin0, switch_pin1, switch_pin2;
-
-public:
-  bool switch_state_0, switch_state_1, switch_state_2;
-  Switch(int sw_pin0, int sw_pin1, int sw_pin2)
-  {
-    switch_pin0 = sw_pin0;
-    switch_pin1 = sw_pin1;
-    switch_pin2 = sw_pin2;
-    pinMode(switch_pin0, INPUT_PULLUP);
-    pinMode(switch_pin1, INPUT_PULLUP);
-    pinMode(switch_pin2, INPUT_PULLUP);
-  }
-
-  int read_swich_state()
-  {
-    // read state of switches (NC logic)
-    switch_state_0 = digitalRead(switch_pin0);
-    switch_state_1 = digitalRead(switch_pin1);
-    switch_state_2 = digitalRead(switch_pin2);
-    // code state 0 if both switches are shorted
-    if ((switch_state_0 == true) & (switch_state_2 == false))
-    {
-      return 0;
-    }
-    // code state 1 if switch0 is shorted and switch1 is open
-    else if ((switch_state_0 == false) & (switch_state_2 == true))
-    {
-      return 2;
-    }
-    // code state 1 if both switches are open
-    else if ((switch_state_0 & switch_state_2) == false)
-    {
-      return 1;
-    }
-    // return error for uknown states
-    else
-    {
-      return -1;
-    }
-  }
-};
-
-class Battery
-{
-private:
-  int _battery_pin;
-  int _led_indicator_pin;
-
-public:
-  Battery(int bat_pin, int led_pin)
-  {
-    _battery_pin = bat_pin;
-    _led_indicator_pin = led_pin;
-    analogReadResolution(12);
-    pinMode(_battery_pin, INPUT);
-  };
-
-  float read_battery_voltage()
-  {
-    // Convert the analog reading (which goes from 0 - 4095) to a voltage (0 - 4.2V):
-    return (analogRead(_battery_pin) * (3.223 / 4095.0)) * (4.2 / 3.223);
-  }
-  bool low_battery_warning(float battery_voltage)
-  {
-    if (battery_voltage >= 3.15)
-      return false;
-    else
-      return true;
-  }
-};
-
+// create a timer with default settings
+auto timer = timer_create_default();
 // create json object for storing data
 const int capacity_out = JSON_OBJECT_SIZE(2);
 StaticJsonDocument<capacity_out> output_data;
-// Battery object
-Battery remoteBattery(ADC_BATTERY, GREEN_LED_BATTERY);
 // switches objects
 Switch heightSwitch(3, 4, 5);
 Switch massSwitch(0, 1, 2);
-// create a timer with default settings
-auto timer = timer_create_default();
+// Battery object
+Battery remoteBattery(ADC_BATTERY, GREEN_LED_BATTERY);
 
 // toggle the LED
 bool toggle_led(void *)
