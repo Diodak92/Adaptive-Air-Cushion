@@ -55,23 +55,22 @@ public:
 class Battery
 {
 private:
-  int battery_pin;
-  int led_indicator_pin;
+  int _battery_pin;
+  int _led_indicator_pin;
 
 public:
   Battery(int bat_pin, int led_pin)
   {
-    battery_pin = bat_pin;
-    led_indicator_pin = led_pin;
+    _battery_pin = bat_pin;
+    _led_indicator_pin = led_pin;
     analogReadResolution(12);
-    pinMode(battery_pin, INPUT);
-    attachInterrupt(digitalPinToInterrupt(led_indicator_pin), blink, CHANGE);
+    pinMode(_battery_pin, INPUT);
   };
 
   float read_battery_voltage()
   {
     // Convert the analog reading (which goes from 0 - 4095) to a voltage (0 - 4.2V):
-    return (analogRead(battery_pin) * (3.223 / 4095.0)) * (4.2 / 3.223); 
+    return (analogRead(_battery_pin) * (3.223 / 4095.0)) * (4.2 / 3.223);
   }
   bool low_battery_warning(float battery_voltage)
   {
@@ -79,9 +78,6 @@ public:
       return false;
     else
       return true;
-  }
-  static void blink()
-  {
   }
 };
 
@@ -93,6 +89,18 @@ Battery remoteBattery(ADC_BATTERY, GREEN_LED_BATTERY);
 // switches objects
 Switch heightSwitch(3, 4, 5);
 Switch massSwitch(0, 1, 2);
+// create a timer with default settings
+auto timer = timer_create_default();
+
+// toggle the LED
+bool toggle_led(void *)
+{
+  if (remoteBattery.low_battery_warning(remoteBattery.read_battery_voltage()))
+  {
+    digitalWrite(GREEN_LED_BATTERY, !digitalRead(GREEN_LED_BATTERY));
+  }
+  return true;
+}
 
 void setup()
 {
@@ -100,6 +108,8 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
+  // call the toggle_led function every 500 millis
+  timer.every(500, toggle_led);
   Serial.println("Setup successfully completedd!");
 }
 
