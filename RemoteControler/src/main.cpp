@@ -119,6 +119,8 @@ void loop()
   int switches_state, switch_state0, switch_state1;
   int valve_level;
 
+   timer.tick(); // tick the timer
+
   /*
    Serial.print("Height switch state: ");
    Serial.print(heightSwitch.read_swich_state());
