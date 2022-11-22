@@ -99,6 +99,10 @@ bool toggle_led(void *)
   {
     digitalWrite(GREEN_LED_BATTERY, !digitalRead(GREEN_LED_BATTERY));
   }
+  else
+  {
+    digitalWrite(GREEN_LED_BATTERY, HIGH);
+  }
   return true;
 }
 
@@ -119,7 +123,7 @@ void loop()
   int switches_state, switch_state0, switch_state1;
   int valve_level;
 
-   timer.tick(); // tick the timer
+  timer.tick(); // tick the timer
 
   /*
    Serial.print("Height switch state: ");
