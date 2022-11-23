@@ -29,7 +29,7 @@ bool toggle_led(void *)
   if (remoteBattery.low_battery_warning(battery_voltage))
   {
     digitalWrite(GREEN_LED_BATTERY, !digitalRead(GREEN_LED_BATTERY));
-    Serial.println('Blink!');
+    Serial.println("Blink!");
   }
   else
   {
