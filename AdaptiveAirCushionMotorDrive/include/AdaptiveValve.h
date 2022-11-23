@@ -15,6 +15,13 @@ public:
     {
         _set_position = set_position;
     }
+
+    void print_position(){
+        Serial.print("Set position: ");
+        Serial.print(_set_position);
+        Serial.print(" [mm] \n");
+    }
+
     void set_position(float new_position)
     {
         Serial.print("Old position: ");
