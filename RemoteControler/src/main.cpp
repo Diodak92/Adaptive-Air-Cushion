@@ -24,12 +24,12 @@ bool toggle_led(void *)
 {
   float battery_voltage = remoteBattery.read_battery_voltage();
 
-  Serial.println(battery_voltage);
+  //Serial.println(battery_voltage);
 
   if (remoteBattery.low_battery_warning(battery_voltage))
   {
     digitalWrite(GREEN_LED_BATTERY, !digitalRead(GREEN_LED_BATTERY));
-    Serial.println("Blink!");
+  //  Serial.println("Battery low!");
   }
   else
   {
@@ -44,9 +44,10 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
+  //digitalWrite(GREEN_LED_BATTERY, HIGH);
   // call the toggle_led function every X millis
-  timer.every(1000, toggle_led);
-  Serial.println("Setup successfully completedd!");
+  timer.every(500, toggle_led);
+  Serial.println("Setup successfully completed!");
 }
 
 void loop()
@@ -105,8 +106,8 @@ void loop()
   }
 
   output_data["height_mass_code"] = valve_level;
-  // serializeJson(output_data, Serial);
-  // Serial.print('\n');
+  serializeJson(output_data, Serial);
+  Serial.print('\n');
   // Serial.print("Battery voltage: ");
   // Serial.print(remoteBattery.read_battery_voltage());
   // Serial.print(" [V] \n");

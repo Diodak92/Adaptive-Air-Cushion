@@ -13,6 +13,8 @@ public:
     _led_indicator_pin = led_pin;
     analogReadResolution(12);
     pinMode(_battery_pin, INPUT);
+    pinMode(_led_indicator_pin, OUTPUT);
+    digitalWrite(_led_indicator_pin, HIGH);
   };
 
   float read_battery_voltage()
