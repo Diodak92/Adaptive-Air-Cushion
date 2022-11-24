@@ -19,17 +19,14 @@ Switch massSwitch(0, 1, 2);
 // Battery object
 Battery remoteBattery(ADC_BATTERY, GREEN_LED_BATTERY);
 
-// toggle the LED
+// read battery voltage toggle LED if battery is low 
 bool toggle_led(void *)
 {
   float battery_voltage = remoteBattery.read_battery_voltage();
-
-  //Serial.println(battery_voltage);
-
   if (remoteBattery.low_battery_warning(battery_voltage))
   {
     digitalWrite(GREEN_LED_BATTERY, !digitalRead(GREEN_LED_BATTERY));
-  //  Serial.println("Battery low!");
+    // Serial.println("Battery low!");
   }
   else
   {
@@ -44,8 +41,8 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   Serial.println("Setup started!");
-  //digitalWrite(GREEN_LED_BATTERY, HIGH);
-  // call the toggle_led function every X millis
+  // digitalWrite(GREEN_LED_BATTERY, HIGH);
+  //  call the toggle_led function every X millis
   timer.every(500, toggle_led);
   Serial.println("Setup successfully completed!");
 }
@@ -66,6 +63,7 @@ void loop()
    Serial.print("\n");
  */
 
+  // read state of switches and code it as one variable 
   switch_state0 = heightSwitch.read_swich_state();
   switch_state1 = massSwitch.read_swich_state();
   switches_state = (switch_state0 << 2) + switch_state1;
