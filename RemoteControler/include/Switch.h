@@ -1,3 +1,6 @@
+#ifndef __Switch__
+#define __Switch__
+
 #include <Arduino.h>
 
 class Switch
@@ -45,3 +48,5 @@ public:
     }
   }
 };
+
+#endif

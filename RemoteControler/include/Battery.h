@@ -1,3 +1,6 @@
+#ifndef __Battery__
+#define __Battery__
+
 #include <Arduino.h>
 
 class Battery
@@ -30,3 +33,5 @@ public:
       return true;
   }
 };
+
+#endif
