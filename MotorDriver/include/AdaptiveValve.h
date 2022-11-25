@@ -12,6 +12,7 @@ private:
     uint8_t _ads_i2c_addr;
     uint8_t _ads_channel;
     float _set_position;
+    const int _measurement_wheel_diameter = 25;
 
 public:
    AdaptiveValve(u_int8_t ads_i2c_addr, uint8_t ads_channel, float set_position = 1000)

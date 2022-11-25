@@ -22,7 +22,7 @@ void setup()
   // check if ADC for vavle 1 was initalized successfully
   Serial.println(ad_valve_1.begin());
   Serial.println(ad_valve_2.begin());
-  Serial.println("Setup successfully completedd!");
+  Serial.println("Setup successfully completed!");
 }
 
 void loop()
