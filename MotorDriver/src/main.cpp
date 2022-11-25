@@ -27,10 +27,10 @@ void setup()
 
 void loop()
 {
-  ad_valve_1.set_position(1250);
+  ad_valve_1.set_position(5);
+  ad_valve_1.print_position();
   delay(2000);
-  ad_valve_1.set_position(985.7);
+  ad_valve_1.set_position(70);
+  ad_valve_1.print_position();
   delay(2000);
-  Serial.println(ad_valve_1.get_position());
-  Serial.println(ad_valve_2.get_position());
 }
