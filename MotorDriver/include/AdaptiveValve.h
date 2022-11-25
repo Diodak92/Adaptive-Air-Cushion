@@ -8,12 +8,22 @@
 class AdaptiveValve
 {
 private:
+    Adafruit_ADS1015 ads;  
+    uint8_t _ads_i2c_addr;
+    uint8_t _ads_channel;
     float _set_position;
 
 public:
-    AdaptiveValve(float set_position = 1000)
+   AdaptiveValve(u_int8_t ads_i2c_addr, uint8_t ads_channel, float set_position = 1000)
     {
+        _ads_i2c_addr = ads_i2c_addr;
+        _ads_channel = ads_channel;
         _set_position = set_position;
+    }
+
+    bool begin()
+    {
+        return ads.begin(_ads_i2c_addr);
     }
 
     void print_position(){
@@ -31,6 +41,11 @@ public:
         Serial.print("New position: ");
         Serial.print(_set_position);
         Serial.print(" [mm] \n");
+    }
+
+    float get_position()
+    {
+        return ads.computeVolts(ads.readADC_SingleEnded(_ads_channel));
     }
 };
 
