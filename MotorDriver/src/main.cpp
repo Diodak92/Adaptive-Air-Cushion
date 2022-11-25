@@ -7,8 +7,8 @@
 // H-bridge object instance
 // TLE9201 h8(7);
 // Declare adaptive valve object
-AdaptiveValve ad_valve_1(0b1001001, 3, 1020.5);
-AdaptiveValve ad_valve_2(0b1001001, 2, 1020.5);
+AdaptiveValve ad_valve_1(0b1001001, 3);
+AdaptiveValve ad_valve_2(0b1001001, 2);
 
 /* MAIN functions declaration */
 // void MAIN_print_hbridge_status(void);
