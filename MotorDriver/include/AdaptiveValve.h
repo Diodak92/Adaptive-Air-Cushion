@@ -8,7 +8,7 @@
 class AdaptiveValve
 {
 private:
-    Adafruit_ADS1015 ads;  
+    Adafruit_ADS1015 _ads;  
     uint8_t _ads_i2c_addr;
     uint8_t _ads_channel;
     float _set_position;
@@ -23,7 +23,7 @@ public:
 
     bool begin()
     {
-        return ads.begin(_ads_i2c_addr);
+        return _ads.begin(_ads_i2c_addr);
     }
 
     void print_position(){
@@ -45,7 +45,7 @@ public:
 
     float get_position()
     {
-        return ads.computeVolts(ads.readADC_SingleEnded(_ads_channel));
+        return _ads.computeVolts(_ads.readADC_SingleEnded(_ads_channel));
     }
 };
 
