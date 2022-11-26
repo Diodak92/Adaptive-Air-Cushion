@@ -1,0 +1,101 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/include",
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/src",
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/Adafruit ADS1X15",
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/Adafruit BusIO",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/Wire",
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/ArduinoJson/src",
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/LoRa/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SPI",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/cores/arduino/api/deprecated",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/cores/arduino/api/deprecated-avr-comp",
+                "C:/Users/Rami/.platformio/packages/framework-cmsis/CMSIS/Include",
+                "C:/Users/Rami/.platformio/packages/framework-cmsis-atmel/CMSIS/Device/ATMEL",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/cores/arduino",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/variants/mkrwan1300",
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/lib/IPPT_TLE9201/include",
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/lib/IPPT_TLE9201/src",
+                "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/Unity/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/HID",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/I2S/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SAMD_AnalogCorrection/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SAMD_BootloaderUpdater/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SBU/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SDU/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SFU/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SNU/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SSU/src",
+                "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/USBHost/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/include",
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/src",
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/Adafruit ADS1X15",
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/Adafruit BusIO",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/Wire",
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/ArduinoJson/src",
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/LoRa/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SPI",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/cores/arduino/api/deprecated",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/cores/arduino/api/deprecated-avr-comp",
+                    "C:/Users/Rami/.platformio/packages/framework-cmsis/CMSIS/Include",
+                    "C:/Users/Rami/.platformio/packages/framework-cmsis-atmel/CMSIS/Device/ATMEL",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/cores/arduino",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/variants/mkrwan1300",
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/lib/IPPT_TLE9201/include",
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/lib/IPPT_TLE9201/src",
+                    "C:/Users/Rami/Adaptive-Air-Cushion/AdaptiveAirCushionMotorDrive/.pio/libdeps/mkrwan1310/Unity/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/HID",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/I2S/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SAMD_AnalogCorrection/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SAMD_BootloaderUpdater/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SBU/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SDU/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SFU/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SNU/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/SSU/src",
+                    "C:/Users/Rami/.platformio/packages/framework-arduino-samd/libraries/USBHost/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60105",
+                "ARDUINO_SAMD_MKRWAN1310",
+                "__SAMD21G18A__",
+                "USE_ARDUINO_MKR_PIN_LAYOUT",
+                "USE_BQ24195L_PMIC",
+                "VERY_LOW_POWER",
+                "ARDUINO=10805",
+                "F_CPU=48000000L",
+                "USBCON",
+                "USB_VID=0x2341",
+                "USB_PID=0x8059",
+                "USB_PRODUCT=\"Arduino MKR WAN 1310\"",
+                "USB_MANUFACTURER=\"Arduino\"",
+                "ARDUINO_ARCH_SAMD",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "C:/Users/Rami/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc.exe",
+            "compilerArgs": [
+                "-mcpu=cortex-m0plus",
+                "-mthumb",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
