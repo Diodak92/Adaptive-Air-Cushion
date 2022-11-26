@@ -11,25 +11,33 @@ private:
     Adafruit_ADS1015 _ads;
     uint8_t _ads_i2c_addr;
     uint8_t _ads_channel;
+    TLE9201 _tle;
+    uint8_t _tle_cs_pin;
     float _set_position;
-    float _displacement;
     const int _displacement_min = 0, _displacement_max = 70;
-    float _ang_position;
+    const float _displacement_tolerance = 2.5;
     const int _ang_position_max = 270;
-    float _u;
     const float _u_max = 3.3;
     const int _measurement_gear_diameter = 25;
 
 public:
-    AdaptiveValve(u_int8_t ads_i2c_addr, uint8_t ads_channel, float set_position = 0)
+    float u;
+    float ang_position;
+    float displacement;
+
+    AdaptiveValve(u_int8_t ads_i2c_addr, uint8_t ads_channel,
+                  uint8_t tle_cs_pin,
+                  float set_position = 0)
     {
         _ads_i2c_addr = ads_i2c_addr;
         _ads_channel = ads_channel;
+        _tle_cs_pin = tle_cs_pin;
         _set_position = constrain(set_position, _displacement_min, _displacement_max);
     }
 
     bool begin()
     {
+        _tle.begin(_tle_cs_pin);
         return _ads.begin(_ads_i2c_addr);
     }
 
@@ -46,10 +54,38 @@ public:
 
     float get_position()
     {
-        _u = _ads.computeVolts(_ads.readADC_SingleEnded(_ads_channel));
-        _ang_position = (_u * _ang_position_max) / _u_max;
-        _displacement = (_ang_position / 360.0) * 3.14159 * _measurement_gear_diameter;
-        return _displacement;
+        u = _ads.computeVolts(_ads.readADC_SingleEnded(_ads_channel));
+        ang_position = (u * _ang_position_max) / _u_max;
+        displacement = (ang_position / 360.0) * 3.14159 * _measurement_gear_diameter;
+        return displacement;
+    }
+
+    bool controller()
+    {
+        // update position on each call
+        get_position();
+        // check if valve position is within tolerance
+        if (abs(_set_position - displacement) >= _displacement_tolerance)
+        {
+            // control motor direction
+            if (_set_position >= displacement)
+            {
+                // turn motor on in forward direction
+                _tle.set_pwm_dir(1, 1);
+            }
+            else
+            {
+                // turn motor on in reverse direction
+                _tle.set_pwm_dir(1, 0);
+            }
+            return false;
+        }
+        else
+        {
+            // turn off the motor
+            _tle.set_pwm_dir(0, 0);
+            return true;
+        }
     }
 
     void print_position()
@@ -59,7 +95,7 @@ public:
         Serial.print(_set_position);
         Serial.print(" [mm] \t");
         Serial.print(" Measured position: ");
-        Serial.print(_displacement);
+        Serial.print(displacement);
         Serial.print(" [mm] \n");
     }
 };

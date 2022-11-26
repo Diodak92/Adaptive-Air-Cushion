@@ -1,14 +1,13 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <LoRa.h>
-#include <cmath>
 #include <AdaptiveValve.h>
 
 // H-bridge object instance
 // TLE9201 h8(7);
 // Declare adaptive valve object
-AdaptiveValve ad_valve_1(0b1001001, 3);
-AdaptiveValve ad_valve_2(0b1001001, 2);
+AdaptiveValve ad_valve_1(0b1001001, 3, 7);
+AdaptiveValve ad_valve_2(0b1001001, 2, 6);
 
 /* MAIN functions declaration */
 // void MAIN_print_hbridge_status(void);
@@ -27,10 +26,18 @@ void setup()
 
 void loop()
 {
-  ad_valve_1.set_position(5);
-  ad_valve_1.print_position();
-  delay(2000);
+  // open valve
+  ad_valve_1.set_position(0);
+  while (ad_valve_1.controller())
+  {
+    ad_valve_1.print_position();
+    delay(500);
+  }
+  // close valve
   ad_valve_1.set_position(70);
-  ad_valve_1.print_position();
-  delay(2000);
+  while (ad_valve_1.controller())
+  {
+    ad_valve_1.print_position();
+    delay(500);
+  }
 }
