@@ -14,7 +14,6 @@
 /**
  * @brief Construct a new TLE9201::TLE9201 object
  * 
- * @param cs_pin - your designated Chip Selcet pin for this particular device
  */
 TLE9201::TLE9201() //(uint8_t cs_pin)
 {
@@ -25,7 +24,9 @@ TLE9201::TLE9201() //(uint8_t cs_pin)
  * @brief Initializes TL9201 object by configuring CS GPIO and SPI parameters.
  *        SPI CLK frequency could be increased if needed (refer to the datasheet).
  * 
+ * @param cs_pin - your designated Chip Selcet pin for this particular device
  */
+ 
 void TLE9201::begin(uint8_t cs_pin)
 {
     spi_cs_pin = cs_pin;
