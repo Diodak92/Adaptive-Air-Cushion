@@ -32,6 +32,12 @@ void setup()
 void loop()
 {
   timer.tick();
+  ad_valve_1.set_position(ad_valve_1.decode_position(2));
+  delay(2000);
+  ad_valve_1.set_position(ad_valve_1.decode_position(6));
+  delay(2000);
+  
+  /*
   // open valve
   ad_valve_1.set_position(0);
   while (ad_valve_1.controller());
@@ -42,4 +48,6 @@ void loop()
   while (ad_valve_1.controller());
   Serial.println("Valve in position!");
   delay(2000);
+  */
+  
 }

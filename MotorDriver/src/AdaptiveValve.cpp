@@ -20,6 +20,11 @@ bool AdaptiveValve::begin()
     return _ads.begin(_ads_i2c_addr);
 }
 
+float AdaptiveValve::decode_position(int remote_settings)
+{
+    return (remote_settings / (_remote_combinations - 1)) * (_displacement_max - _displacement_min);
+}
+
 void AdaptiveValve::set_position(float new_position)
 {
     Serial.print("Old position: ");
