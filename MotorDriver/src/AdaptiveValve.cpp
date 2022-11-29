@@ -22,7 +22,7 @@ bool AdaptiveValve::begin()
 
 float AdaptiveValve::decode_position(int remote_settings)
 {
-    return (remote_settings / (_remote_combinations - 1)) * (_displacement_max - _displacement_min);
+    return (remote_settings / (_remote_combinations - 1.0)) * (_displacement_max - _displacement_min);
 }
 
 void AdaptiveValve::set_position(float new_position)
