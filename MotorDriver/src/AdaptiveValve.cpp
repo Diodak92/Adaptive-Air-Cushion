@@ -2,11 +2,15 @@
 
 AdaptiveValve::AdaptiveValve(u_int8_t ads_i2c_addr, uint8_t ads_channel,
                              uint8_t tle_cs_pin,
-                             float set_position)
+                             float set_position,
+                             float displacement_min,
+                             float displacement_max)
 {
     _ads_i2c_addr = ads_i2c_addr;
     _ads_channel = ads_channel;
     _tle_cs_pin = tle_cs_pin;
+    _displacement_min = displacement_min;
+    _displacement_max = displacement_max;
     _set_position = constrain(set_position, _displacement_min, _displacement_max);
 }
 

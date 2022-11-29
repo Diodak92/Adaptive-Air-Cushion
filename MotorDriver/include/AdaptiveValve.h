@@ -14,7 +14,7 @@ private:
     TLE9201 _tle;
     uint8_t _tle_cs_pin;
     float _set_position;
-    const int _displacement_min = 0, _displacement_max = 70;
+    float _displacement_min, _displacement_max;
     const float _displacement_tolerance = 2.5;
     const int _ang_position_max = 270;
     const float _u_max = 3.3;
@@ -27,7 +27,8 @@ public:
 
     AdaptiveValve(u_int8_t ads_i2c_addr, uint8_t ads_channel,
                   uint8_t tle_cs_pin,
-                  float set_position = 0);
+                  float set_position = 0,
+                  float displacement_min = 0, float displacement_max = 70);
 
     bool begin();
     void set_position(float new_position);
