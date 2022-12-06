@@ -2,12 +2,16 @@
 #include <arduino-timer.h>
 #include <ArduinoJson.h>
 #include <LoRa.h>
+#include <loraHelperFunctions.h>
 #include <Switch.h>
 #include <Battery.h>
 
 #define ADC_BATTERY A0      // baterry pin
-#define GREEN_LED_BATTERY 6 // baterry LED
+#define LED_PWR_GREEN 6 // baterry LED
+#define LED_LINK_BLUE 7 // lora status LED
 
+// LoRa Frequency
+const long frequency = 868E6;  
 // create a timer with default settings
 auto timer = timer_create_default();
 // create json object for storing data
@@ -17,7 +21,7 @@ StaticJsonDocument<capacity_out> output_data;
 Switch heightSwitch(3, 4, 5);
 Switch massSwitch(0, 1, 2);
 // Battery object
-Battery remoteBattery(ADC_BATTERY, GREEN_LED_BATTERY);
+Battery remoteBattery(ADC_BATTERY, LED_PWR_GREEN);
 
 // read battery voltage toggle LED if battery is low 
 bool toggle_led(void *)
@@ -25,12 +29,12 @@ bool toggle_led(void *)
   float battery_voltage = remoteBattery.read_battery_voltage();
   if (remoteBattery.low_battery_warning(battery_voltage))
   {
-    digitalWrite(GREEN_LED_BATTERY, !digitalRead(GREEN_LED_BATTERY));
+    digitalWrite(LED_PWR_GREEN, !digitalRead(LED_PWR_GREEN));
     // Serial.println("Battery low!");
   }
   else
   {
-    digitalWrite(GREEN_LED_BATTERY, HIGH);
+    digitalWrite(LED_PWR_GREEN, HIGH);
   }
   return true;
 }
@@ -38,13 +42,31 @@ bool toggle_led(void *)
 void setup()
 {
   // start serial comunication
-  Serial.begin(115200);
-  while (!Serial);
-  Serial.println("Setup started!");
-  // digitalWrite(GREEN_LED_BATTERY, HIGH);
-  //  call the toggle_led function every X millis
+  // Serial.begin(115200);
+  // while (!Serial);
+  LoRa_sendMessage("Setup started!");
+  // turn LEDs ON
+  digitalWrite(LED_PWR_GREEN, HIGH);
+  digitalWrite(LED_LINK_BLUE, HIGH);
+  // signal if LoRa init failed
+  if (!LoRa.begin(frequency)) {
+    while (true)
+    {
+      digitalWrite(LED_LINK_BLUE, HIGH);
+      delay(200);
+      digitalWrite(LED_LINK_BLUE, LOW);
+      delay(1000);
+    }
+  }
+
+  // setup interrupts and mode for LoRa 
+  LoRa.onReceive(onReceive);
+  LoRa.onTxDone(onTxDone);
+  LoRa_rxMode();
+
+  // call the toggle_led function every X millis
   timer.every(500, toggle_led);
-  Serial.println("Setup successfully completed!");
+  LoRa_sendMessage("Setup successfully completed!");
 }
 
 void loop()
@@ -103,12 +125,14 @@ void loop()
     break;
   }
 
+  // add switches status to JSON object
   output_data["height_mass_code"] = valve_level;
-  serializeJson(output_data, Serial);
-  Serial.print('\n');
-  // Serial.print("Battery voltage: ");
-  // Serial.print(remoteBattery.read_battery_voltage());
-  // Serial.print(" [V] \n");
 
-  delay(2000);
+  if (runEvery(1000))                    // repeat every 1000 millis
+  {                                  
+    LoRa_txMode();                       // set tx mode
+    LoRa.beginPacket();                  // start packet
+    serializeJson(output_data, LoRa);    // add payload
+    LoRa.endPacket(true);                // finish packet and send it
+  }
 }
