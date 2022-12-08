@@ -7,7 +7,7 @@
 // create a timer with default settings
 auto timer = timer_create_default();
 // Declare adaptive valve object
-AdaptiveValve ad_valve_1(0b1001001, 3, 7);
+AdaptiveValve ad_valve_1(0b1001001, 3, 7, 0.0, 0.0, 800.0);
 AdaptiveValve ad_valve_2(0b1001001, 2, 6);
 
 bool print_position(void *)
@@ -32,11 +32,13 @@ void setup()
 void loop()
 {
   timer.tick();
+  /*
   ad_valve_1.set_position(ad_valve_1.decode_position(2));
   delay(2000);
   ad_valve_1.set_position(ad_valve_1.decode_position(6));
   delay(2000);
-  
+  */
+ 
   /*
   // open valve
   ad_valve_1.set_position(0);

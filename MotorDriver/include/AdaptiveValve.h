@@ -16,7 +16,7 @@ private:
     float _set_position;
     float _displacement_min, _displacement_max;
     const float _displacement_tolerance = 2.5;
-    const int _ang_position_max = 270;
+    const int _ang_position_max = 3600;
     const float _u_max = 3.3;
     const int _measurement_gear_diameter = 25;
     const int _remote_combinations = 9; 
