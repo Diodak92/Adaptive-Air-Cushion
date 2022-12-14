@@ -28,15 +28,15 @@ void onReceive(int packetSize)
   {
     message += (char)LoRa.read();
   }
-  Serial.println(message);
-  // Serial.print("Gateway Receive: ");
   // Serial.println(message);
-  Serial.print("\n");
+  Serial.print("Gateway Receive: ");
+  Serial.println(message);
+  // Serial.print("\n");
 }
 
 void onTxDone()
 {
-  // Serial.println("TxDone");
+  Serial.println("TxDone");
   LoRa_rxMode();
 }
 

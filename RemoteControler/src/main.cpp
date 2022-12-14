@@ -42,8 +42,8 @@ bool toggle_led(void *)
 void setup()
 {
   // start serial comunication
-  // Serial.begin(115200);
-  // while (!Serial);
+  Serial.begin(115200);
+  while (!Serial);
   // turn LEDs ON
   digitalWrite(LED_PWR_GREEN, HIGH);
   digitalWrite(LED_LINK_BLUE, HIGH);
@@ -59,8 +59,13 @@ void setup()
     }
   }
 
-  LoRa_sendMessage("Setup started!");
-
+  Serial.println("LoRa init succeeded.");
+  Serial.println();
+  Serial.println("LoRa Simple Gateway");
+  Serial.println("Only receive messages from nodes");
+  Serial.println("Tx: invertIQ enable");
+  Serial.println("Rx: invertIQ disable");
+  Serial.println();
   // setup interrupts and mode for LoRa
   LoRa.onReceive(onReceive);
   LoRa.onTxDone(onTxDone);
@@ -68,7 +73,6 @@ void setup()
 
   // call the toggle_led function every X millis
   timer.every(500, toggle_led);
-  LoRa_sendMessage("Setup successfully completed!");
 }
 
 void loop()
@@ -136,5 +140,6 @@ void loop()
     LoRa.beginPacket();               // start packet
     serializeJson(output_data, LoRa); // add payload
     LoRa.endPacket(true);             // finish packet and send it
+    serializeJson(output_data, Serial); // add payload
   }
 }

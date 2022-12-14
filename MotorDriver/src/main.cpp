@@ -24,14 +24,21 @@ void setup()
 {
   // start serial comunication
   Serial.begin(115200);
-  while (!Serial)
-    ;
+  while (!Serial);
   Serial.println("Setup started!");
   if (!LoRa.begin(frequency))
   {
     Serial.println("Starting LoRa failed!");
     while (true);
   }
+  
+  Serial.println("LoRa init succeeded.");
+  Serial.println();
+  Serial.println("LoRa Simple Node");
+  Serial.println("Only receive messages from gateways");
+  Serial.println("Tx: invertIQ disable");
+  Serial.println("Rx: invertIQ enable");
+  Serial.println();
 
   LoRa.onReceive(onReceive);
   LoRa.onTxDone(onTxDone);
@@ -40,13 +47,12 @@ void setup()
   // check if ADC for vavle 1 was initalized successfully
   Serial.println(ad_valve_1.begin());
   Serial.println(ad_valve_2.begin());
-  timer.every(500, print_position);
+  //timer.every(500, print_position);
   Serial.println("Setup successfully completed!");
 }
 
 void loop()
 {
-  delay(1000);
   // timer.tick();
   /*  ad_valve_1.set_position(ad_valve_1.decode_position(2));
   delay(2000);
