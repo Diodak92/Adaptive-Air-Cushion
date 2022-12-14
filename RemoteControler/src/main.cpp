@@ -42,8 +42,8 @@ bool toggle_led(void *)
 void setup()
 {
   // start serial comunication
-  Serial.begin(115200);
-  while (!Serial);
+  //Serial.begin(115200);
+  //while (!Serial);
   // turn LEDs ON
   digitalWrite(LED_PWR_GREEN, HIGH);
   digitalWrite(LED_LINK_BLUE, HIGH);
@@ -59,17 +59,17 @@ void setup()
     }
   }
 
-  Serial.println("LoRa init succeeded.");
-  Serial.println();
-  Serial.println("LoRa Simple Gateway");
-  Serial.println("Only receive messages from nodes");
-  Serial.println("Tx: invertIQ enable");
-  Serial.println("Rx: invertIQ disable");
-  Serial.println();
+ // Serial.println("LoRa init succeeded.");
+  //Serial.println();
+  //Serial.println("LoRa Simple Gateway");
+  //Serial.println("Only receive messages from nodes");
+  //Serial.println("Tx: invertIQ enable");
+  //Serial.println("Rx: invertIQ disable");
+  //Serial.println();
   // setup interrupts and mode for LoRa
-  LoRa.onReceive(onReceive);
-  LoRa.onTxDone(onTxDone);
-  LoRa_rxMode();
+  //LoRa.onReceive(onReceive);
+  //LoRa.onTxDone(onTxDone);
+  //LoRa_rxMode();
 
   // call the toggle_led function every X millis
   timer.every(500, toggle_led);
@@ -134,12 +134,13 @@ void loop()
   // add switches status to JSON object
   output_data["height_mass_code"] = valve_level;
 
-  if (runEvery(1000)) // repeat every 1000 millis
+  if (runEvery(2000)) // repeat every 1000 millis
   {
-    LoRa_txMode();                    // set tx mode
+    //LoRa_txMode();                    // set tx mode
     LoRa.beginPacket();               // start packet
+    //LoRa.print(valve_level);
     serializeJson(output_data, LoRa); // add payload
     LoRa.endPacket(true);             // finish packet and send it
-    serializeJson(output_data, Serial); // add payload
+    //serializeJson(output_data, Serial); // add payload
   }
 }

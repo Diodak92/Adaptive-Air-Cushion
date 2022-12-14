@@ -12,6 +12,8 @@ AdaptiveValve ad_valve_1(0b1001001, 3, 7, 390.0, 380.0, 400.0);
 AdaptiveValve ad_valve_2(0b1001001, 2, 6);
 // LoRa Frequency
 const long frequency = 868E6;
+// Declare object fot Json file
+DynamicJsonDocument doc(256);
 
 bool print_position(void *)
 {
@@ -40,9 +42,9 @@ void setup()
   Serial.println("Rx: invertIQ enable");
   Serial.println();
 
-  LoRa.onReceive(onReceive);
-  LoRa.onTxDone(onTxDone);
-  LoRa_rxMode();
+  //LoRa.onReceive(onReceive);
+  //LoRa.onTxDone(onTxDone);
+  //LoRa_rxMode();
 
   // check if ADC for vavle 1 was initalized successfully
   Serial.println(ad_valve_1.begin());
@@ -53,6 +55,24 @@ void setup()
 
 void loop()
 {
+  // try to parse packet
+  int packetSize = LoRa.parsePacket();
+  if (packetSize) {
+    // received a packet
+    
+    // read packet
+    while (LoRa.available()) {
+      Serial.print((char)LoRa.read());
+      //deserializeJson(doc, LoRa.read());
+      //int remote_code = doc["height_mass_code"];
+      //Serial.println(remote_code);
+    }
+
+    // print RSSI of packet
+    //Serial.print("' with RSSI ");
+    //Serial.println(LoRa.packetRssi());
+  }
+
   // timer.tick();
   /*  ad_valve_1.set_position(ad_valve_1.decode_position(2));
   delay(2000);
