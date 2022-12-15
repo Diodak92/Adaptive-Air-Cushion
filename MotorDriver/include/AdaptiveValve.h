@@ -22,6 +22,7 @@ private:
     const int _remote_combinations = 9; 
 
 public:
+    bool in_position;
     float u;
     float ang_position;
     float displacement;
@@ -35,7 +36,7 @@ public:
     float decode_position(int remote_setting);
     void set_position(float new_position);
     float get_position();
-    bool controller();
+    void controller();
     void print_position();
 };
 

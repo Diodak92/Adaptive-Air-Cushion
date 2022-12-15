@@ -27,16 +27,7 @@ float AdaptiveValve::decode_position(int remote_settings)
 
 void AdaptiveValve::set_position(float new_position)
 {
-    Serial.print(" Measured position: ");
-    Serial.print(displacement);
-    Serial.print(" [mm] \t");
-    Serial.print("Old position: ");
-    Serial.print(_set_position);
-    Serial.print(" [mm] \t");
     _set_position = constrain(new_position, _displacement_min, _displacement_max);
-    Serial.print("New position: ");
-    Serial.print(_set_position);
-    Serial.print(" [mm] \n");
 }
 
 float AdaptiveValve::get_position()
@@ -47,7 +38,7 @@ float AdaptiveValve::get_position()
     return displacement;
 }
 
-bool AdaptiveValve::controller()
+void AdaptiveValve::controller()
 {
     // update position on each call
     get_position();
@@ -65,13 +56,15 @@ bool AdaptiveValve::controller()
             // turn motor on in reverse direction
             _tle.set_pwm_dir(1, 0);
         }
-        return false;
+        // return false;
+        in_position = false;
     }
     else
     {
         // turn off the motor
         _tle.set_pwm_dir(0, 0);
-        return true;
+        // return true;
+        in_position = true;
     }
 }
 

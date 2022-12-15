@@ -15,25 +15,20 @@ const long frequency = 868E6;
 // Declare object fot Json file
 DynamicJsonDocument doc(256);
 
-bool print_position(void *)
-{
-  // ad_valve_1.get_position();
-  // ad_valve_1.print_position();
-  return true;
-}
-
 void setup()
 {
   // start serial comunication
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial)
+    ;
   Serial.println("Setup started!");
   if (!LoRa.begin(frequency))
   {
     Serial.println("Starting LoRa failed!");
-    while (true);
+    while (true)
+      ;
   }
-  
+
   Serial.println("LoRa init succeeded.");
   Serial.println();
   Serial.println("LoRa Simple Node");
@@ -42,36 +37,66 @@ void setup()
   Serial.println("Rx: invertIQ enable");
   Serial.println();
 
-  //LoRa.onReceive(onReceive);
-  //LoRa.onTxDone(onTxDone);
-  //LoRa_rxMode();
+  // LoRa.onReceive(onReceive);
+  // LoRa.onTxDone(onTxDone);
+  // LoRa_rxMode();
 
   // check if ADC for vavle 1 was initalized successfully
   Serial.println(ad_valve_1.begin());
   Serial.println(ad_valve_2.begin());
-  //timer.every(500, print_position);
+  // timer.every(500, print_position);
   Serial.println("Setup successfully completed!");
 }
 
+int remote_command = 0;
+
 void loop()
 {
-  // try to parse packet
-  int packetSize = LoRa.parsePacket();
-  if (packetSize) {
-    // received a packet
-    
-    // read packet
-    while (LoRa.available()) {
-      Serial.print((char)LoRa.read());
-      //deserializeJson(doc, LoRa.read());
-      //int remote_code = doc["height_mass_code"];
-      //Serial.println(remote_code);
-    }
 
-    // print RSSI of packet
-    //Serial.print("' with RSSI ");
-    //Serial.println(LoRa.packetRssi());
+  // print controler position
+  if (runEvery(1000))
+  {
+    ad_valve_1.print_position();
   }
+
+  // regulator loop
+  if (runEvery(10))
+  {
+    ad_valve_1.controller();
+  }
+
+  // change set position
+  if (runEvery(3500))
+  {
+    if (ad_valve_1.in_position & (remote_command == 0))
+    {
+      ad_valve_1.set_position(ad_valve_1.decode_position(8));
+    }
+    if (ad_valve_1.in_position & (remote_command == 8))
+    {
+      ad_valve_1.set_position(ad_valve_1.decode_position(0));
+    }
+  }
+
+  /*
+   // try to parse packet
+    int packetSize = LoRa.parsePacket();
+    if (packetSize) {
+      // received a packet
+
+      // read packet
+      while (LoRa.available()) {
+        Serial.print((char)LoRa.read());
+        //deserializeJson(doc, LoRa.read());
+        //int remote_code = doc["height_mass_code"];
+        //Serial.println(remote_code);
+      }
+
+      // print RSSI of packet
+      //Serial.print("' with RSSI ");
+      //Serial.println(LoRa.packetRssi());
+    }
+  */
 
   // timer.tick();
   /*  ad_valve_1.set_position(ad_valve_1.decode_position(2));
