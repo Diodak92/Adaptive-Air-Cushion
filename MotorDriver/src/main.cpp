@@ -70,11 +70,13 @@ void loop()
   {
     if (ad_valve_1.in_position & (remote_command == 0))
     {
-      ad_valve_1.set_position(ad_valve_1.decode_position(8));
+      remote_command = 8;
+      ad_valve_1.set_position(ad_valve_1.decode_position(remote_command));
     }
     if (ad_valve_1.in_position & (remote_command == 8))
     {
-      ad_valve_1.set_position(ad_valve_1.decode_position(0));
+      remote_command = 0;
+      ad_valve_1.set_position(ad_valve_1.decode_position(remote_command));
     }
   }
 
