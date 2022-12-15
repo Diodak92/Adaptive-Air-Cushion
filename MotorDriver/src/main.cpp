@@ -8,11 +8,11 @@
 // create a timer with default settings
 auto timer = timer_create_default();
 // Declare adaptive valve object
-AdaptiveValve ad_valve_1(0b1001001, 3, 7, 390.0, 380.0, 400.0);
+AdaptiveValve ad_valve_1(0b1001001, 3, 7, 410.0, 410.0, 480.0);
 AdaptiveValve ad_valve_2(0b1001001, 2, 6);
 // LoRa Frequency
 const long frequency = 868E6;
-// Declare object fot Json file
+// Declare object for Json file
 DynamicJsonDocument doc(256);
 
 void setup()
@@ -54,17 +54,19 @@ void loop()
 {
 
   // print controler position
+  //if (runEvery(1000))
+  //{
+  //  ad_valve_1.print_position();
+  //}
+
+  // regulator loop
+  ad_valve_1.controller();
   if (runEvery(1000))
   {
     ad_valve_1.print_position();
+    Serial.println(ad_valve_1.in_position);
   }
-
-  // regulator loop
-  if (runEvery(10))
-  {
-    ad_valve_1.controller();
-  }
-
+/*
   // change set position
   if (runEvery(3500))
   {
@@ -79,8 +81,8 @@ void loop()
       ad_valve_1.set_position(ad_valve_1.decode_position(remote_command));
     }
   }
+*/
 
-  /*
    // try to parse packet
     int packetSize = LoRa.parsePacket();
     if (packetSize) {
@@ -98,7 +100,7 @@ void loop()
       //Serial.print("' with RSSI ");
       //Serial.println(LoRa.packetRssi());
     }
-  */
+
 
   // timer.tick();
   /*  ad_valve_1.set_position(ad_valve_1.decode_position(2));

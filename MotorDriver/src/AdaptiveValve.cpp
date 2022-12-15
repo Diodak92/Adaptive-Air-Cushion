@@ -11,7 +11,7 @@ AdaptiveValve::AdaptiveValve(u_int8_t ads_i2c_addr, uint8_t ads_channel,
     _tle_cs_pin = tle_cs_pin;
     _displacement_min = displacement_min;
     _displacement_max = displacement_max;
-    _set_position = constrain(set_position, _displacement_min, _displacement_max);
+    _set_position = set_position; // constrain(set_position, _displacement_min, _displacement_max);
 }
 
 bool AdaptiveValve::begin()
@@ -27,7 +27,7 @@ float AdaptiveValve::decode_position(int remote_settings)
 
 void AdaptiveValve::set_position(float new_position)
 {
-    _set_position = constrain(new_position, _displacement_min, _displacement_max);
+    _set_position =  new_position; // constrain(new_position, _displacement_min, _displacement_max);
 }
 
 float AdaptiveValve::get_position()
@@ -56,14 +56,14 @@ void AdaptiveValve::controller()
             // turn motor on in reverse direction
             _tle.set_pwm_dir(1, 0);
         }
-        // return false;
+        //return false;
         in_position = false;
     }
     else
     {
         // turn off the motor
         _tle.set_pwm_dir(0, 0);
-        // return true;
+        //return true;
         in_position = true;
     }
 }
