@@ -15,7 +15,7 @@ private:
     uint8_t _tle_cs_pin;
     float _set_position;
     float _displacement_min, _displacement_max;
-    const float _displacement_tolerance = 2.5;
+    float _displacement_tolerance; // = 2.5;
     const int _ang_position_max = 3600;
     const float _u_max = 3.3;
     const int _measurement_gear_diameter = 25;
@@ -36,7 +36,7 @@ public:
     float decode_position(int remote_setting);
     void set_position(float new_position);
     float get_position();
-    void controller();
+    bool controller(float displacement_tolerance = 2.5);
     void print_position();
 };
 

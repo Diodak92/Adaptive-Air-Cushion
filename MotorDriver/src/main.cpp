@@ -13,7 +13,7 @@ AdaptiveValve ad_valve_2(0b1001001, 2, 6);
 // LoRa Frequency
 const long frequency = 868E6;
 // Declare object for Json file
-DynamicJsonDocument doc(256);
+DynamicJsonDocument doc(1024);
 
 void setup()
 {
@@ -48,78 +48,53 @@ void setup()
   Serial.println("Setup successfully completed!");
 }
 
-int remote_command = 0;
-
 void loop()
 {
-
-  // print controler position
-  //if (runEvery(1000))
-  //{
-  //  ad_valve_1.print_position();
-  //}
-
   // regulator loop
   ad_valve_1.controller();
+
+  // try to parse packet
+  int packetSize = LoRa.parsePacket();
+  if (packetSize)
+  {
+    // read packet
+    while (LoRa.available())
+    {
+      // Serial.print((char)LoRa.read());
+      // Serial.print(LoRa.readString());
+      // String remote_code_json = LoRa.readString();
+      deserializeJson(doc, LoRa.readString());
+      int remote_code = doc["height_mass_code"];
+      ad_valve_1.set_position(ad_valve_1.decode_position(remote_code));
+      Serial.println(remote_code);
+    }
+
+    // print RSSI of packet
+    // Serial.print("' with RSSI ");
+    // Serial.println(LoRa.packetRssi());
+  }
+
+    // print controler position
   if (runEvery(1000))
   {
     ad_valve_1.print_position();
     Serial.println(ad_valve_1.in_position);
   }
-/*
-  // change set position
-  if (runEvery(3500))
-  {
-    if (ad_valve_1.in_position & (remote_command == 0))
-    {
-      remote_command = 8;
-      ad_valve_1.set_position(ad_valve_1.decode_position(remote_command));
-    }
-    if (ad_valve_1.in_position & (remote_command == 8))
-    {
-      remote_command = 0;
-      ad_valve_1.set_position(ad_valve_1.decode_position(remote_command));
-    }
-  }
-*/
 
-   // try to parse packet
-    int packetSize = LoRa.parsePacket();
-    if (packetSize) {
-      // received a packet
-
-      // read packet
-      while (LoRa.available()) {
-        Serial.print((char)LoRa.read());
-        //deserializeJson(doc, LoRa.read());
-        //int remote_code = doc["height_mass_code"];
-        //Serial.println(remote_code);
+  /*
+    // change set position
+    if (runEvery(3500))
+    {
+      if (ad_valve_1.in_position & (remote_command == 0))
+      {
+        remote_command = 8;
+        ad_valve_1.set_position(ad_valve_1.decode_position(remote_command));
       }
-
-      // print RSSI of packet
-      //Serial.print("' with RSSI ");
-      //Serial.println(LoRa.packetRssi());
+      if (ad_valve_1.in_position & (remote_command == 8))
+      {
+        remote_command = 0;
+        ad_valve_1.set_position(ad_valve_1.decode_position(remote_command));
+      }
     }
-
-
-  // timer.tick();
-  /*  ad_valve_1.set_position(ad_valve_1.decode_position(2));
-  delay(2000);
-  ad_valve_1.set_position(ad_valve_1.decode_position(6));
-  delay(2000);
   */
-
-  // open valve
-  // float pos1 = ad_valve_1.decode_position(0), pos2 = ad_valve_1.decode_position(8);
-  // Serial.println(pos1);
-  // ad_valve_1.set_position(ad_valve_1.decode_position(0));
-  // while (ad_valve_1.controller());
-  // Serial.println("Valve in position!");
-  // delay(2000);
-  // close valve
-  // Serial.println(pos2);
-  // ad_valve_1.set_position(ad_valve_1.decode_position(8));
-  // while (ad_valve_1.controller());
-  // Serial.println("Valve in position!");
-  // delay(2000);
 }

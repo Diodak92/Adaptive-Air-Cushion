@@ -38,8 +38,10 @@ float AdaptiveValve::get_position()
     return displacement;
 }
 
-void AdaptiveValve::controller()
+bool AdaptiveValve::controller(float displacement_tolerance)
 {
+    // update dispcacement tolerance 
+    _displacement_tolerance = displacement_tolerance;
     // update position on each call
     get_position();
     // check if valve position is within tolerance
@@ -56,15 +58,19 @@ void AdaptiveValve::controller()
             // turn motor on in reverse direction
             _tle.set_pwm_dir(1, 0);
         }
-        //return false;
+        // update object variable
         in_position = false;
+        // return value as well 
+        return false;
     }
     else
     {
         // turn off the motor
         _tle.set_pwm_dir(0, 0);
-        //return true;
+        // update object variable
         in_position = true;
+        // return value as well 
+        return true;
     }
 }
 
