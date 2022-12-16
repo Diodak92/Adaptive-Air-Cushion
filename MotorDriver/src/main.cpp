@@ -9,7 +9,13 @@
 auto timer = timer_create_default();
 // Declare adaptive valve object
 AdaptiveValve ad_valve_1(0b1001001, 3, 7, 410.0, 410.0, 480.0);
-AdaptiveValve ad_valve_2(0b1001001, 2, 6);
+AdaptiveValve ad_valve_2(0b1001001, 2, 6, 410.0, 410.0, 480.0);
+AdaptiveValve ad_valve_3(0b1001001, 1, 5, 410.0, 410.0, 480.0);
+AdaptiveValve ad_valve_4(0b1001001, 0, 4, 410.0, 410.0, 480.0);
+AdaptiveValve ad_valve_5(0b1001000, 3, 3, 410.0, 410.0, 480.0);
+AdaptiveValve ad_valve_6(0b1001000, 2, 2, 410.0, 410.0, 480.0);
+AdaptiveValve ad_valve_7(0b1001000, 1, 1, 410.0, 410.0, 480.0);
+AdaptiveValve ad_valve_8(0b1001000, 0, 0, 410.0, 410.0, 480.0);
 // LoRa Frequency
 const long frequency = 868E6;
 // Declare object for Json file
@@ -44,6 +50,12 @@ void setup()
   // check if ADC for vavle 1 was initalized successfully
   Serial.println(ad_valve_1.begin());
   Serial.println(ad_valve_2.begin());
+  Serial.println(ad_valve_3.begin());
+  Serial.println(ad_valve_4.begin());
+  Serial.println(ad_valve_5.begin());
+  Serial.println(ad_valve_6.begin());
+  Serial.println(ad_valve_7.begin());
+  Serial.println(ad_valve_8.begin());
   // timer.every(500, print_position);
   Serial.println("Setup successfully completed!");
 }
@@ -51,7 +63,14 @@ void setup()
 void loop()
 {
   // regulator loop
-  ad_valve_1.controller();
+  ad_valve_1.controller(2.5); // function argument tolerance in mm
+  ad_valve_2.controller();
+  ad_valve_3.controller();
+  ad_valve_4.controller();
+  ad_valve_5.controller();
+  ad_valve_6.controller();
+  ad_valve_7.controller();
+  ad_valve_8.controller();
 
   // try to parse packet
   int packetSize = LoRa.parsePacket();
@@ -66,6 +85,14 @@ void loop()
       deserializeJson(doc, LoRa.readString());
       int remote_code = doc["height_mass_code"];
       ad_valve_1.set_position(ad_valve_1.decode_position(remote_code));
+      ad_valve_2.set_position(ad_valve_2.decode_position(remote_code));
+      ad_valve_3.set_position(ad_valve_3.decode_position(remote_code));
+      ad_valve_4.set_position(ad_valve_4.decode_position(remote_code));
+      ad_valve_5.set_position(ad_valve_5.decode_position(remote_code));
+      ad_valve_6.set_position(ad_valve_6.decode_position(remote_code));
+      ad_valve_7.set_position(ad_valve_7.decode_position(remote_code));
+      ad_valve_8.set_position(ad_valve_8.decode_position(remote_code));
+
       Serial.println(remote_code);
     }
 
@@ -77,8 +104,8 @@ void loop()
     // print controler position
   if (runEvery(1000))
   {
-    ad_valve_1.print_position();
-    Serial.println(ad_valve_1.in_position);
+    //ad_valve_1.print_position();
+    //ad_valve_2.print_position();
   }
 
   /*

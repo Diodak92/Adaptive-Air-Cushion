@@ -134,7 +134,7 @@ void loop()
   // add switches status to JSON object
   output_data["height_mass_code"] = valve_level;
 
-  if (runEvery(2000)) // repeat every 1000 millis
+  if (runEvery(500)) // repeat every 500 millis
   {
     //LoRa_txMode();                    // set tx mode
     LoRa.beginPacket();               // start packet

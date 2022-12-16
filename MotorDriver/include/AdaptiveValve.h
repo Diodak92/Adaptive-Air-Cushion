@@ -20,6 +20,7 @@ private:
     const float _u_max = 3.3;
     const int _measurement_gear_diameter = 25;
     const int _remote_combinations = 9; 
+    int _remote_code;
 
 public:
     bool in_position;

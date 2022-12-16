@@ -22,12 +22,17 @@ bool AdaptiveValve::begin()
 
 float AdaptiveValve::decode_position(int remote_settings)
 {
-    return (remote_settings / (_remote_combinations - 1.0)) * (_displacement_max - _displacement_min) + _displacement_min;
+    if (remote_settings != -1)
+    {
+        _remote_code = remote_settings;
+    }
+    
+    return (_remote_code / (_remote_combinations - 1.0)) * (_displacement_max - _displacement_min) + _displacement_min;
 }
 
 void AdaptiveValve::set_position(float new_position)
 {
-    _set_position =  new_position; // constrain(new_position, _displacement_min, _displacement_max);
+    _set_position = new_position; // constrain(new_position, _displacement_min, _displacement_max);
 }
 
 float AdaptiveValve::get_position()
@@ -40,7 +45,7 @@ float AdaptiveValve::get_position()
 
 bool AdaptiveValve::controller(float displacement_tolerance)
 {
-    // update dispcacement tolerance 
+    // update dispcacement tolerance
     _displacement_tolerance = displacement_tolerance;
     // update position on each call
     get_position();
@@ -60,7 +65,7 @@ bool AdaptiveValve::controller(float displacement_tolerance)
         }
         // update object variable
         in_position = false;
-        // return value as well 
+        // return value as well
         return false;
     }
     else
@@ -69,7 +74,7 @@ bool AdaptiveValve::controller(float displacement_tolerance)
         _tle.set_pwm_dir(0, 0);
         // update object variable
         in_position = true;
-        // return value as well 
+        // return value as well
         return true;
     }
 }
