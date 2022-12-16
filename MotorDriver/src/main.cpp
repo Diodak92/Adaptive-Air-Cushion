@@ -24,17 +24,17 @@ DynamicJsonDocument doc(1024);
 void setup()
 {
   // start serial comunication
-  Serial.begin(115200);
-  while (!Serial)
-    ;
-  Serial.println("Setup started!");
+  //Serial.begin(115200);
+  //while (!Serial);
+  //Serial.println("Setup started!");
   if (!LoRa.begin(frequency))
   {
-    Serial.println("Starting LoRa failed!");
+    //Serial.println("Starting LoRa failed!");
     while (true)
       ;
   }
 
+/*
   Serial.println("LoRa init succeeded.");
   Serial.println();
   Serial.println("LoRa Simple Node");
@@ -42,11 +42,11 @@ void setup()
   Serial.println("Tx: invertIQ disable");
   Serial.println("Rx: invertIQ enable");
   Serial.println();
-
+*/
   // LoRa.onReceive(onReceive);
   // LoRa.onTxDone(onTxDone);
   // LoRa_rxMode();
-
+/*
   // check if ADC for vavle 1 was initalized successfully
   Serial.println(ad_valve_1.begin());
   Serial.println(ad_valve_2.begin());
@@ -56,8 +56,17 @@ void setup()
   Serial.println(ad_valve_6.begin());
   Serial.println(ad_valve_7.begin());
   Serial.println(ad_valve_8.begin());
+  */
   // timer.every(500, print_position);
-  Serial.println("Setup successfully completed!");
+  // Serial.println("Setup successfully completed!");
+  ad_valve_1.begin();
+  ad_valve_2.begin();
+  ad_valve_3.begin();
+  ad_valve_4.begin();
+  ad_valve_5.begin();
+  ad_valve_6.begin();
+  ad_valve_7.begin();
+  ad_valve_8.begin();
 }
 
 void loop()
@@ -93,7 +102,7 @@ void loop()
       ad_valve_7.set_position(ad_valve_7.decode_position(remote_code));
       ad_valve_8.set_position(ad_valve_8.decode_position(remote_code));
 
-      Serial.println(remote_code);
+      //Serial.println(remote_code);
     }
 
     // print RSSI of packet
