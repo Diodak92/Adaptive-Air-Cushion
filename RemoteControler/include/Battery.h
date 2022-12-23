@@ -1,7 +1,22 @@
+/**
+ * @file Switch.h
+ * @author Tomasz Marcin Kowalski
+ * @brief Function/Class prototypes for battery
+ * @version 1.0
+ * @date 2022-12-15
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #ifndef __Battery__
 #define __Battery__
 
 #include <Arduino.h>
+
+/**
+ * @brief This class implements functions for reading and battery voltage and signaling discharge
+ */
 
 class Battery
 {

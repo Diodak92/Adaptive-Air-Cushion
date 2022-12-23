@@ -1,3 +1,14 @@
+/**
+ * @file main.cpp
+ * @author Tomasz Marcin Kowalski
+ * @brief Main function for remote controler for adaptive air cushion
+ * @version 1.0
+ * @date 2022-12-15
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include <Arduino.h>
 #include <arduino-timer.h>
 #include <ArduinoJson.h>
@@ -10,6 +21,8 @@
 #define LED_PWR_GREEN 6 // baterry LED
 #define LED_LINK_BLUE 7 // lora status LED
 
+// change this vale for enableling serial output
+const bool serial_enable = false;
 // LoRa Frequency
 const long frequency = 868E6;
 // create a timer with default settings
@@ -42,8 +55,11 @@ bool toggle_led(void *)
 void setup()
 {
   // start serial comunication
-  //Serial.begin(115200);
-  //while (!Serial);
+  if (serial_enable)
+  {
+    Serial.begin(115200);
+    while (!Serial);
+  }
   // turn LEDs ON
   digitalWrite(LED_PWR_GREEN, HIGH);
   digitalWrite(LED_LINK_BLUE, HIGH);
@@ -59,17 +75,7 @@ void setup()
     }
   }
 
- // Serial.println("LoRa init succeeded.");
-  //Serial.println();
-  //Serial.println("LoRa Simple Gateway");
-  //Serial.println("Only receive messages from nodes");
-  //Serial.println("Tx: invertIQ enable");
-  //Serial.println("Rx: invertIQ disable");
-  //Serial.println();
-  // setup interrupts and mode for LoRa
-  //LoRa.onReceive(onReceive);
-  //LoRa.onTxDone(onTxDone);
-  //LoRa_rxMode();
+  if (serial_enable) Serial.println("LoRa init succeeded.");
 
   // call the toggle_led function every X millis
   timer.every(500, toggle_led);
@@ -77,19 +83,19 @@ void setup()
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
   int switches_state, switch_state0, switch_state1;
   int valve_level;
 
   timer.tick(); // tick the timer
 
-  /*
-   Serial.print("Height switch state: ");
-   Serial.print(heightSwitch.read_swich_state());
-   Serial.print("\t Mass switch state: ");
-   Serial.print(massSwitch.read_swich_state());
-   Serial.print("\n");
- */
+  if (serial_enable)
+  {
+    Serial.print("Height switch state: ");
+    Serial.print(heightSwitch.read_swich_state());
+    Serial.print("\t Mass switch state: ");
+    Serial.print(massSwitch.read_swich_state());
+    Serial.print("\n");
+  }
 
   // read state of switches and code it as one variable
   switch_state0 = heightSwitch.read_swich_state();
@@ -136,11 +142,9 @@ void loop()
 
   if (runEvery(500)) // repeat every 500 millis
   {
-    //LoRa_txMode();                    // set tx mode
-    LoRa.beginPacket();               // start packet
-    //LoRa.print(valve_level);
-    serializeJson(output_data, LoRa); // add payload
-    LoRa.endPacket(true);             // finish packet and send it
-    //serializeJson(output_data, Serial); // add payload
+    LoRa.beginPacket();                 // start packet
+    serializeJson(output_data, LoRa);   // add payload
+    LoRa.endPacket(true);               // finish packet and send it
+    if (serial_enable) serializeJson(output_data, Serial);
   }
 }
