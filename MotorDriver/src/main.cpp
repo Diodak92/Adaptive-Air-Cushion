@@ -35,7 +35,7 @@ const long frequency = 868E6;
 DynamicJsonDocument doc(1024);
 
 // change this vale for enableling serial output
-bool serial_enable = false;
+const bool serial_enable = false;
 
 void setup()
 {
@@ -49,18 +49,12 @@ void setup()
   // start LoRa communication
   if (!LoRa.begin(frequency))
   {
-    if (serial_enable)
-    {
-      Serial.println("Starting LoRa failed!");
-    }
+    if (serial_enable) Serial.println("Starting LoRa failed!");
     while (true);
   }
   else
   {
-    if (serial_enable)
-    {
-      Serial.println("LoRa init succeeded.");
-    }
+    if (serial_enable) Serial.println("LoRa init succeeded.");
   }
 
   // initialize adaptive valves
@@ -110,10 +104,7 @@ void loop()
     while (LoRa.available())
     {
       // print recived message
-      if (serial_enable)
-      {
-        Serial.print(LoRa.readString());
-      }
+      if (serial_enable) Serial.print(LoRa.readString());
 
       // deserialize and unpack value from JSON object
       deserializeJson(doc, LoRa.readString());
@@ -126,12 +117,9 @@ void loop()
       ad_valve_6.set_position(ad_valve_6.decode_position(remote_code));
       ad_valve_7.set_position(ad_valve_7.decode_position(remote_code));
       ad_valve_8.set_position(ad_valve_8.decode_position(remote_code));
-      
-      // print unpacked remote control code 
-      if (serial_enable)
-      {
-        Serial.println(remote_code);
-      }
+
+      // print unpacked remote control code
+      if (serial_enable) Serial.println(remote_code);
     }
 
     // print strength of LoRa signal
