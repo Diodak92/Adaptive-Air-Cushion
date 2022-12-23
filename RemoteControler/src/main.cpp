@@ -43,8 +43,8 @@ bool toggle_led(void *)
   if (remoteBattery.low_battery_warning(battery_voltage))
   {
     digitalWrite(LED_PWR_GREEN, !digitalRead(LED_PWR_GREEN));
-    // Serial.println("Battery low!");
   }
+
   else
   {
     digitalWrite(LED_PWR_GREEN, HIGH);
@@ -75,7 +75,8 @@ void setup()
     }
   }
 
-  if (serial_enable) Serial.println("LoRa init succeeded.");
+  if (serial_enable)
+    Serial.println("LoRa init succeeded.");
 
   // call the toggle_led function every X millis
   timer.every(500, toggle_led);
@@ -142,9 +143,10 @@ void loop()
 
   if (runEvery(500)) // repeat every 500 millis
   {
-    LoRa.beginPacket();                 // start packet
-    serializeJson(output_data, LoRa);   // add payload
-    LoRa.endPacket(true);               // finish packet and send it
-    if (serial_enable) serializeJson(output_data, Serial);
+    LoRa.beginPacket();               // start packet
+    serializeJson(output_data, LoRa); // add payload
+    LoRa.endPacket(true);             // finish packet and send it
+    if (serial_enable)
+      serializeJson(output_data, Serial);
   }
 }
